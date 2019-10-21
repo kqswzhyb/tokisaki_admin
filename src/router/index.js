@@ -11,6 +11,10 @@ Vue.use(VueRouter);
  */
 
 export default function(/* { store, ssrContext } */) {
+  const routerPush = VueRouter.prototype.push;
+  VueRouter.prototype.push = function push(location) {
+    return routerPush.call(this, location).catch(error => error);
+  };
   const Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
