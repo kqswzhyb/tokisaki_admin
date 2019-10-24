@@ -18,6 +18,7 @@ const routes = [
         path: "/notice/:id",
         component: () => import("pages/home/Notice.vue"),
         meta: {
+          title: "任务要求",
           back: true
         }
       },
@@ -26,7 +27,21 @@ const routes = [
         component: () => import("pages/home/Notices.vue"),
         meta: {
           back: true,
-          title: "公告一览"
+          title: "任务一览"
+        }
+      }
+    ]
+  },
+  {
+    path: "/user",
+    component: () => import("layouts/MyLayout.vue"),
+    children: [
+      {
+        path: "points/:id",
+        component: () => import("pages/user/pointDetail.vue"),
+        meta: {
+          title: "积分明细",
+          back: true
         }
       }
     ]
@@ -61,7 +76,7 @@ const routes = [
         path: "short/:id",
         component: () => import("pages/rank/ShortRank.vue"),
         meta: {
-          title: "绿宝石项链赛积分排行",
+          title: "短期任务积分排行",
           back: true
         }
       },

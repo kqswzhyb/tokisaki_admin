@@ -29,7 +29,7 @@
           dense
           flat
           round
-          icon="face"
+          icon="account_circle"
           @click="rightDrawerOpen = !rightDrawerOpen"
         />
       </q-toolbar>
@@ -42,6 +42,14 @@
       content-class="bg-grey-2"
     >
       <q-list>
+        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>首页</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
           <q-item-section avatar>
             <q-icon name="calendar_today" />
@@ -102,7 +110,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="$router.push('/user/points/7')">
             <q-item-section avatar>
               <q-icon name="star" />
             </q-item-section>
@@ -114,7 +122,7 @@
 
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="account_circle" />
+              <q-icon name="person" />
             </q-item-section>
 
             <q-item-section>
@@ -131,6 +139,18 @@
 
             <q-item-section>
               创建任务
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="trending_up" />
+            </q-item-section>
+
+            <q-item-section>
+              数据统计
             </q-item-section>
           </q-item>
 

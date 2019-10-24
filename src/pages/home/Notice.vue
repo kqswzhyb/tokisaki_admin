@@ -101,7 +101,7 @@
 
 <script>
 export default {
-  name: "home",
+  name: "notice",
   data() {
     return {
       slide: 1,

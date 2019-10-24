@@ -143,7 +143,7 @@
 
 <script>
 export default {
-  name: "PageIndex",
+  name: "longTask",
   data() {
     return {
       prompt: false,

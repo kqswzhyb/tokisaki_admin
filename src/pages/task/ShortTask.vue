@@ -143,7 +143,7 @@
 
 <script>
 export default {
-  name: "PageIndex",
+  name: "shortTask",
   data() {
     return {
       prompt: false,

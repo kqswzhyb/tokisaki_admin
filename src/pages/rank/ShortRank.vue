@@ -17,6 +17,7 @@
             >
               <q-date
                 v-model="date"
+                :options="dates"
                 :locale="myLocale"
                 @input="() => $refs.qDateProxy.hide()"
               />
@@ -32,6 +33,7 @@
         behavior="dialog"
       />
     </div>
+    <div class="text-h5 main" style="margin-bottom:10px;">世萌外交</div>
     <div style="margin-bottom:20px;">
       <div class="text-weight-medium" style="margin-bottom:5px;">
         本次任务起始时间: 2019.10.19 23:00:00
@@ -184,12 +186,19 @@
 <script>
 const stringOptions = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 export default {
-  name: "PageIndex",
+  name: "shortRank",
   data() {
     return {
       tasks: [],
       task: "",
       date: "2019/02/01",
+      dates: [
+        "2019/02/01",
+        "2019/02/05",
+        "2019/02/06",
+        "2019/02/09",
+        "2019/02/23"
+      ],
       model: null,
       stringOptions,
       options: stringOptions,
