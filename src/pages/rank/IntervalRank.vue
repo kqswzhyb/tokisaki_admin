@@ -1,44 +1,29 @@
 <template>
   <div class="q-pa-md" style="width: 100%;">
-    <div class="row" style="width: 100%;justify-content:space-between;">
-      <q-input
-        filled
-        v-model="date"
-        mask="date"
-        style="width: 44vw;margin-top:20px;"
-        :rules="['date']"
+    <div
+      class="row"
+      style="width: 100%;justify-content:center; margin-bottom:20px;"
+    >
+      <q-tabs
+        v-model="time"
+        dense
+        class="text-grey"
+        style="width:100%;"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
       >
-        <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy
-              ref="qDateProxy"
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <q-date
-                v-model="date"
-                :options="dates"
-                :locale="myLocale"
-                @input="() => $refs.qDateProxy.hide()"
-              />
-            </q-popup-proxy>
-          </q-icon>
-        </template>
-      </q-input>
-      <q-select
-        filled
-        v-model="name"
-        :options="stringOptions"
-        style="width: 44vw;"
-        behavior="menu"
-      />
+        <q-tab name="week" label="周排行" />
+        <q-tab name="month" label="月排行" />
+        <q-tab name="total" label="总排行" />
+      </q-tabs>
     </div>
     <div style="margin-bottom:20px;">
       <div class="text-weight-medium" style="margin-bottom:5px;">
-        本次任务起始时间: 2019.10.19 23:00:00
+        起始时间: 2019.10.19 23:00:00
       </div>
       <div class="text-weight-medium">
-        本次任务终止时间: 2019.10.21 09:00:00
+        终止时间: 2019.10.21 09:00:00
       </div>
     </div>
 
@@ -183,53 +168,16 @@
 </template>
 
 <script>
-const stringOptions = ["世萌外交", "b萌外交", "评论点赞"];
 export default {
-  name: "shortRank",
+  name: "intervalRank",
   data() {
     return {
       tasks: [],
       task: "",
-      date: "2019/02/01",
-      dates: [
-        "2019/02/01",
-        "2019/02/05",
-        "2019/02/06",
-        "2019/02/09",
-        "2019/02/23"
-      ],
-      name: stringOptions[0],
-      stringOptions,
-      options: stringOptions,
-      myLocale: {
-        /* starting with Sunday */
-        days: "周日_周一_周二_周三_周四_周五_周六".split("_"),
-        daysShort: "周日_周一_周二_周三_周四_周五_周六".split("_"),
-        months: "1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月".split("_"),
-        monthsShort: "1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月".split(
-          "_"
-        ),
-        firstDayOfWeek: 1
-      },
+      time: "week",
       tab: "one"
     };
   },
-  methods: {
-    filterFn(val, update) {
-      if (val === "") {
-        update(() => {
-          this.options = stringOptions;
-        });
-        return;
-      }
-
-      update(() => {
-        const needle = val.toLowerCase();
-        this.options = stringOptions.filter(
-          v => v.toLowerCase().indexOf(needle) > -1
-        );
-      });
-    }
-  }
+  methods: {}
 };
 </script>

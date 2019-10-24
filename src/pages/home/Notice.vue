@@ -1,62 +1,57 @@
 <template>
   <div>
-    <q-card class="my-card">
-      <q-carousel
-        swipeable
-        animated
-        v-model="slide"
-        v-if="images.length !== 0"
-        infinite
-        navigation
-        autoplay
-        height="200px"
-      >
-        <q-carousel-slide
-          v-for="(item, index) in images"
-          :key="index"
-          :name="index"
-          :img-src="item"
-        />
-      </q-carousel>
+    <q-carousel
+      swipeable
+      animated
+      v-model="slide"
+      v-if="images.length !== 0"
+      infinite
+      navigation
+      autoplay
+      height="200px"
+    >
+      <q-carousel-slide
+        v-for="(item, index) in images"
+        :key="index"
+        :name="index"
+        :img-src="item"
+      />
+    </q-carousel>
 
-      <q-card-section>
-        <div
-          class="text-h5"
-          style="display:flex;justify-content:space-between;"
-        >
-          {{ title }}
-          <div>
-            <q-icon
-              name="edit"
-              class="text-primary"
-              style="font-size: 20px;margin-right:15px;"
-              @click="confirm = true"
-            />
-            <q-icon
-              name="delete"
-              class="text-primary"
-              style="font-size: 20px;"
-              @click="alert = true"
-            />
-          </div>
+    <q-card-section>
+      <div class="text-h5" style="display:flex;justify-content:space-between;">
+        {{ title }}
+        <div>
+          <q-icon
+            name="edit"
+            class="text-primary"
+            style="font-size: 20px;margin-right:15px;"
+            @click="confirm = true"
+          />
+          <q-icon
+            name="delete"
+            class="text-primary"
+            style="font-size: 20px;"
+            @click="alert = true"
+          />
         </div>
-        <div class="text-subtitle2">
-          by <span class="main">玄机妙算</span> 2019.10.19 23:03
-        </div>
-      </q-card-section>
+      </div>
+      <div class="text-subtitle2">
+        by <span class="main">玄机妙算</span> 2019.10.19 23:03
+      </div>
+    </q-card-section>
 
-      <q-card-section v-html="ReplaceUrl(editor)" />
-      <q-card-actions align="right">
-        <q-btn
-          label="本次排行"
-          color="white"
-          text-color="black"
-          v-close-popup
-          @click="$router.push('/rank/short/2')"
-        />
-        <q-btn label="去完成任务" color="primary" glossy v-close-popup />
-      </q-card-actions>
-    </q-card>
+    <q-card-section v-html="ReplaceUrl(editor)" />
+    <q-card-actions align="right">
+      <q-btn
+        label="本次排行"
+        color="white"
+        text-color="black"
+        v-close-popup
+        @click="$router.push('/rank/short/2')"
+      />
+      <q-btn label="去完成任务" color="primary" glossy v-close-popup />
+    </q-card-actions>
     <q-dialog v-model="alert">
       <q-card>
         <q-card-section>
@@ -104,7 +99,7 @@ export default {
   name: "notice",
   data() {
     return {
-      slide: 1,
+      slide: 0,
       confirm: false,
       alert: false,
       title: "世萌外交",

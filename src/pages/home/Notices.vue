@@ -7,7 +7,7 @@
       >
         <img
           src="~assets/svgs/working.svg"
-          style="width:40px;height:40px;position:absolute;left:0;top:0;"
+          style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
         />
         <div class="text-h6" style="color:#505050;">{{ title }}</div>
         <div class="text-subtitle2" style="color:#808080;">
@@ -26,7 +26,7 @@
       >
         <img
           src="~assets/svgs/finish.svg"
-          style="width:40px;height:40px;position:absolute;left:0;top:0;"
+          style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
         />
         <div class="text-h6" style="color:#505050;">{{ title }}</div>
         <div class="text-subtitle2" style="color:#808080;">
@@ -45,7 +45,7 @@
       >
         <img
           src="~assets/svgs/finish.svg"
-          style="width:40px;height:40px;position:absolute;left:0;top:0;"
+          style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
         />
         <div class="text-h6" style="color:#505050;">{{ title }}</div>
         <div class="text-subtitle2" style="color:#808080;">
@@ -64,7 +64,7 @@
       >
         <img
           src="~assets/svgs/finish.svg"
-          style="width:40px;height:40px;position:absolute;left:0;top:0;"
+          style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
         />
         <div class="text-h6" style="color:#505050;">{{ title }}</div>
         <div class="text-subtitle2" style="color:#808080;">
@@ -83,7 +83,7 @@
       >
         <img
           src="~assets/svgs/finish.svg"
-          style="width:40px;height:40px;position:absolute;left:0;top:0;"
+          style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
         />
         <div class="text-h6" style="color:#505050;">{{ title }}</div>
         <div class="text-subtitle2" style="color:#808080;">

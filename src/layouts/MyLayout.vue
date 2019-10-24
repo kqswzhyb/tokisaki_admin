@@ -42,7 +42,7 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+        <q-item clickable @click="$router.push('/home')">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
@@ -50,7 +50,7 @@
             <q-item-label>首页</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+        <q-item clickable @click="$router.push('/rank/short/2')">
           <q-item-section avatar>
             <q-icon name="calendar_today" />
           </q-item-section>
@@ -58,7 +58,7 @@
             <q-item-label>短期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+        <q-item clickable @click="$router.push('/rank/long/2')">
           <q-item-section avatar>
             <q-icon name="insert_chart_outlined" />
           </q-item-section>
@@ -66,12 +66,15 @@
             <q-item-label>长期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://github.quasar.dev"
-        >
+        <q-item clickable @click="$router.push('/rank/interval')">
+          <q-item-section avatar>
+            <q-icon name="update" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>周期排行</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable @click="$router.push('/notices?type=0')">
           <q-item-section avatar>
             <q-icon name="library_books" />
           </q-item-section>
@@ -79,12 +82,7 @@
             <q-item-label>短期任务</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://forum.quasar.dev"
-        >
+        <q-item clickable @click="$router.push('/notices?type=1')">
           <q-item-section avatar>
             <q-icon name="event_note" />
           </q-item-section>

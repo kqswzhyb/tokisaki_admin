@@ -76,15 +76,23 @@ const routes = [
         path: "short/:id",
         component: () => import("pages/rank/ShortRank.vue"),
         meta: {
-          title: "短期任务积分排行",
+          title: "短期积分排行",
           back: true
         }
       },
       {
         path: "long/:id",
-        component: () => import("pages/task/LongTask.vue"),
+        component: () => import("pages/rank/LongRank.vue"),
         meta: {
-          title: "众筹",
+          title: "长期积分排行",
+          back: true
+        }
+      },
+      {
+        path: "interval",
+        component: () => import("pages/rank/IntervalRank.vue"),
+        meta: {
+          title: "周期积分排行",
           back: true
         }
       }
