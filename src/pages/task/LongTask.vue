@@ -25,7 +25,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label style="color:#978bf9;">name</q-item-label>
+              <q-item-label class="leader">name</q-item-label>
               <q-item-label caption>本次出资：10</q-item-label>
             </q-item-section>
           </q-item>
@@ -118,9 +118,7 @@
         <q-card-section>
           <div class="text-h6">
             给
-            <span class="text-weight-medium" style="color:#e66457;">{{
-              name
-            }}</span>
+            <span class="text-weight-medium main">{{ name }}</span>
             备注
           </div>
         </q-card-section>

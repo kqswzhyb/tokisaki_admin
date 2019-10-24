@@ -1,1 +1,41 @@
 // app global css in SCSS form
+$mainColor:#e66457;
+$leader:#978bf9;
+
+
+.main {
+  color: $mainColor;
+}
+.main-b {
+  background-color: $mainColor;
+}
+.leader {
+  color: $leader;
+}
+.leader-b {
+  background-color: $leader;
+}
+
+.q-uploader--dark .q-uploader__list {
+  background: #f2f2f2;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag {
+  width:150px;
+  padding:20px;
+  border-radius: 14px;
+  background-color: #ff9800;
+}
+
+.tag2 {
+  width:150px;
+  padding:20px;
+  border-radius: 14px;
+  background-color: #26A69A;
+}

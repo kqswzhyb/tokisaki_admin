@@ -1,13 +1,23 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated style="background:#e66457;">
+    <q-header elevated class="main-b">
       <q-toolbar>
         <q-btn
           flat
           dense
           round
+          v-if="!$route.meta.back"
           @click="leftDrawerOpen = !leftDrawerOpen"
           icon="menu"
+          aria-label="Menu"
+        />
+        <q-btn
+          flat
+          dense
+          round
+          v-else
+          @click="$router.go(-1)"
+          icon="arrow_back"
           aria-label="Menu"
         />
 
@@ -32,14 +42,20 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item-label header>Essential Links</q-item-label>
         <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
           <q-item-section avatar>
-            <q-icon name="school" />
+            <q-icon name="calendar_today" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
+            <q-item-label>短期排行</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+          <q-item-section avatar>
+            <q-icon name="insert_chart_outlined" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>长期排行</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -49,25 +65,10 @@
           href="https://github.quasar.dev"
         >
           <q-item-section avatar>
-            <q-icon name="code" />
+            <q-icon name="library_books" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://chat.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="chat" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>chat.quasar.dev</q-item-label>
+            <q-item-label>短期任务</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -77,39 +78,10 @@
           href="https://forum.quasar.dev"
         >
           <q-item-section avatar>
-            <q-icon name="record_voice_over" />
+            <q-icon name="event_note" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://twitter.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="rss_feed" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          href="https://facebook.quasar.dev"
-        >
-          <q-item-section avatar>
-            <q-icon name="public" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Facebook</q-item-label>
-            <q-item-label caption>@QuasarFramework</q-item-label>
+            <q-item-label>长期任务</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -122,31 +94,31 @@
         <q-list padding>
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="inbox" />
+              <q-icon name="assignment" />
             </q-item-section>
 
             <q-item-section>
-              Inbox
-            </q-item-section>
-          </q-item>
-
-          <q-item active clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="star" />
-            </q-item-section>
-
-            <q-item-section>
-              Star
+              我的任务
             </q-item-section>
           </q-item>
 
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="send" />
+              <q-icon name="star" />
             </q-item-section>
 
             <q-item-section>
-              Send
+              积分明细
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="account_circle" />
+            </q-item-section>
+
+            <q-item-section>
+              个人中心
             </q-item-section>
           </q-item>
 
@@ -154,11 +126,23 @@
 
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="drafts" />
+              <q-icon name="build" />
             </q-item-section>
 
             <q-item-section>
-              Drafts
+              创建任务
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="info" />
+            </q-item-section>
+
+            <q-item-section>
+              退出登录
             </q-item-section>
           </q-item>
         </q-list>
@@ -172,8 +156,7 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
-          <div class="text-weight-bold">Razvan Stoenescu</div>
-          <div>@rstoenescu</div>
+          <div class="text-weight-bold">玄机妙算</div>
         </div>
       </q-img>
     </q-drawer>
