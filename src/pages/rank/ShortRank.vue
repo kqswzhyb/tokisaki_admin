@@ -5,6 +5,7 @@
         filled
         v-model="date"
         mask="date"
+        label="任务日期"
         style="width: 44vw;margin-top:20px;"
         :rules="['date']"
       >

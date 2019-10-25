@@ -98,7 +98,7 @@
         style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd"
       >
         <q-list padding>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="$router.push('/notices?type=3')">
             <q-item-section avatar>
               <q-icon name="assignment" />
             </q-item-section>
@@ -108,7 +108,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/user/points/7')">
+          <q-item clickable v-ripple @click="$router.push('/user/scores/7')">
             <q-item-section avatar>
               <q-icon name="star" />
             </q-item-section>
@@ -130,7 +130,7 @@
 
           <q-separator />
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="$router.push('/task/create')">
             <q-item-section avatar>
               <q-icon name="build" />
             </q-item-section>

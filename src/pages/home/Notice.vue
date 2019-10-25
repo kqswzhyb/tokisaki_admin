@@ -15,6 +15,7 @@
         :key="index"
         :name="index"
         :img-src="item"
+        @click="getImg(images, index)"
       />
     </q-carousel>
 
@@ -26,7 +27,7 @@
             name="edit"
             class="text-primary"
             style="font-size: 20px;margin-right:15px;"
-            @click="confirm = true"
+            @click="$router.push('/task/edit/2')"
           />
           <q-icon
             name="delete"
@@ -42,15 +43,46 @@
     </q-card-section>
 
     <q-card-section v-html="ReplaceUrl(editor)" />
+    <div
+      class="flex-between"
+      style="padding:0 15px 15px 15px;justify-content:flex-start;"
+    >
+      <span style="font-size:16px;margin-right:5px;" class="main"
+        >每次完成任务可获得</span
+      >
+      <q-icon name="star" size="sm" style="color:#ff9800;margin-right:5px;" />
+      <span style="color:#ff9800;" class="text-h6">1</span>
+    </div>
     <q-card-actions align="right">
+      <q-btn
+        label="我的提交"
+        color="warning"
+        glossy
+        v-close-popup
+        @click="$router.push('/user/commit/2')"
+      />
+      <q-btn
+        label="小组情况"
+        color="info"
+        glossy
+        v-close-popup
+        @click="$router.push('/task/short/2')"
+      />
       <q-btn
         label="本次排行"
         color="white"
+        glossy
         text-color="black"
         v-close-popup
         @click="$router.push('/rank/short/2')"
       />
-      <q-btn label="去完成任务" color="primary" glossy v-close-popup />
+      <q-btn
+        label="去完成任务"
+        color="primary"
+        glossy
+        v-close-popup
+        @click="$router.push('/task/do/2')"
+      />
     </q-card-actions>
     <q-dialog v-model="alert">
       <q-card>
@@ -68,33 +100,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="confirm">
-      <q-card style="padding:10px;">
-        <q-input
-          outlined
-          v-model="title"
-          label="标题"
-          style="margin-bottom:15px;"
-        />
-        <q-editor v-model="editor" toolbar-bg="secondary" min-height="5rem" />
-        <q-uploader
-          url="http://localhost:4444/upload"
-          style="width:100%;margin:20px 0;"
-          dark
-          multiple
-          accept="image/*"
-          :max-file-size="1024 * 1024"
-        />
-        <q-card-actions align="right">
-          <q-btn flat label="取消" color="primary" v-close-popup />
-          <q-btn flat label="发布" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
 <script>
+import { ImagePreview } from "vant";
 export default {
   name: "notice",
   data() {
@@ -119,6 +129,14 @@ export default {
         return '<a href="' + a + '" target=_blank>' + a + "</a>";
       });
       return s;
+    },
+    getImg(item, index) {
+      ImagePreview({
+        images: item,
+        showIndex: true,
+        loop: false,
+        startPosition: index
+      });
     }
   }
 };

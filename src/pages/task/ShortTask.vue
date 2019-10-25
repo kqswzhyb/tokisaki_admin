@@ -1,5 +1,8 @@
 <template>
   <div class="q-pa-md" style="width: 100%;">
+    <div style="margin-bottom:20px;" @click="$router.push('/notice/2')">
+      <span class="text-h6 main">世萌外交</span>
+    </div>
     <div style="margin-bottom:20px;">
       <div class="text-weight-medium" style="margin-bottom:5px;">
         本次任务起始时间: 2019.10.19 23:00:00
@@ -26,7 +29,7 @@
 
             <q-item-section>
               <q-item-label class="leader">name</q-item-label>
-              <q-item-label caption>本次任务完成数：10</q-item-label>
+              <q-item-label caption>完成数：10</q-item-label>
             </q-item-section>
           </q-item>
         </template>
@@ -47,11 +50,6 @@
             <q-item-section top>
               <q-item-label lines="1">
                 <span class="text-weight-medium">总积分：2000</span>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section top>
-              <q-item-label lines="1">
-                <span class="text-weight-medium">累计票数：100</span>
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -114,7 +112,7 @@
       </q-expansion-item>
     </q-list>
     <q-dialog v-model="prompt">
-      <q-card style="min-width: 400px">
+      <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6">
             给

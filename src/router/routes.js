@@ -37,10 +37,18 @@ const routes = [
     component: () => import("layouts/MyLayout.vue"),
     children: [
       {
-        path: "points/:id",
-        component: () => import("pages/user/pointDetail.vue"),
+        path: "scores/:id",
+        component: () => import("pages/user/ScoreDetail.vue"),
         meta: {
           title: "积分明细",
+          back: true
+        }
+      },
+      {
+        path: "commit/:id",
+        component: () => import("pages/user/CommitRecord.vue"),
+        meta: {
+          title: "提交记录",
           back: true
         }
       }
@@ -54,7 +62,7 @@ const routes = [
         path: "short/:id",
         component: () => import("pages/task/ShortTask.vue"),
         meta: {
-          title: "世萌外交",
+          title: "短期任务",
           back: true
         }
       },
@@ -62,7 +70,31 @@ const routes = [
         path: "long/:id",
         component: () => import("pages/task/LongTask.vue"),
         meta: {
-          title: "众筹",
+          title: "长期任务",
+          back: true
+        }
+      },
+      {
+        path: "create",
+        component: () => import("pages/task/CreateTask.vue"),
+        meta: {
+          title: "创建任务",
+          back: true
+        }
+      },
+      {
+        path: "edit/:id",
+        component: () => import("pages/task/EditTask.vue"),
+        meta: {
+          title: "修改任务",
+          back: true
+        }
+      },
+      {
+        path: "do/:id",
+        component: () => import("pages/task/DoTask.vue"),
+        meta: {
+          title: "完成任务",
           back: true
         }
       }

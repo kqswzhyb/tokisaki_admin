@@ -7,13 +7,13 @@
         side="left"
       >
         <div>
-          经过审查完成10次任务，积分+10
+          完成10次任务，积分+10
         </div>
       </q-timeline-entry>
 
       <q-timeline-entry title="众筹集资" subtitle="2019.10.20" side="right">
         <div>
-          经过审查贡献100元，积分+100
+          贡献100元，积分+100
         </div>
       </q-timeline-entry>
 
