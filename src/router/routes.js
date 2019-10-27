@@ -51,6 +51,28 @@ const routes = [
           title: "提交记录",
           back: true
         }
+      },
+      {
+        path: "center/:id",
+        component: () => import("pages/user/Center.vue"),
+        meta: {
+          title: "用户资料",
+          back: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/members",
+    component: () => import("layouts/MyLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/Members.vue"),
+        meta: {
+          title: "组员列表",
+          back: true
+        }
       }
     ]
   },

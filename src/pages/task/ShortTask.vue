@@ -49,19 +49,22 @@
           <q-item>
             <q-item-section top>
               <q-item-label lines="1">
-                <span class="text-weight-medium">总积分：2000</span>
+                <q-btn
+                  color="primary"
+                  label="他的提交"
+                  size="sm"
+                  @click="$router.push('/user/commit/2')"
+                />
               </q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section top>
               <q-item-label lines="1">
-                <q-btn
-                  color="primary"
-                  label="备注"
-                  size="sm"
-                  @click="openRemark('name', 465604612)"
-                />
+                <span class="text-weight-medium">备注：{{ remark }}</span>
+                <q-popup-edit v-model="remark" title="备注">
+                  <q-input v-model="remark" dense autofocus counter />
+                </q-popup-edit>
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -111,31 +114,6 @@
         </q-card>
       </q-expansion-item>
     </q-list>
-    <q-dialog v-model="prompt">
-      <q-card style="width: 300px">
-        <q-card-section>
-          <div class="text-h6">
-            给
-            <span class="text-weight-medium main">{{ name }}</span>
-            备注
-          </div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input
-            dense
-            v-model="remark"
-            autofocus
-            @keyup.enter="prompt = false"
-          />
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="取消" v-close-popup />
-          <q-btn flat label="确定" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -147,7 +125,7 @@ export default {
       prompt: false,
       uid: 0,
       name: "",
-      remark: ""
+      remark: "无"
     };
   },
   methods: {

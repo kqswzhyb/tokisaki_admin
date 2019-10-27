@@ -28,13 +28,20 @@
       >
         <q-card>
           <q-card-section>
+            获得积分：<span style="color:#ff9800;">{{ item.score }}</span>
+            分
+            <q-popup-edit v-model="item.score" title="修改本次提交积分">
+              <q-input v-model="item.score" dense autofocus counter />
+            </q-popup-edit>
+          </q-card-section>
+          <q-card-section>
             提交内容：<q-card-section v-html="ReplaceUrl(item.text)" />
           </q-card-section>
           <q-card-section>
             提交图片：
-            <div v-if="item.images === 0" style="margin-top:20px;">
+            <span v-if="item.images.length === 0">
               没有提交图片
-            </div>
+            </span>
             <div v-else style="margin-top:20px;">
               <img
                 :src="item2"
@@ -67,7 +74,18 @@ export default {
             "https://cdn.quasar.dev/img/parallax2.jpg",
             "https://cdn.quasar.dev/img/quasar.jpg"
           ],
-          text: "What you see is <b>what</b> you get."
+          text: "What you see is <b>what</b> you get.",
+          score: 1
+        },
+        {
+          images: [
+            // "https://cdn.quasar.dev/img/mountains.jpg",
+            // "https://cdn.quasar.dev/img/parallax1.jpg",
+            // "https://cdn.quasar.dev/img/parallax2.jpg",
+            // "https://cdn.quasar.dev/img/quasar.jpg"
+          ],
+          text: "2222What you see is <b>what</b> you get.",
+          score: 1
         }
       ]
     };

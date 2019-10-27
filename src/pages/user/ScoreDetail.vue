@@ -1,6 +1,6 @@
 <template>
   <div class="q-px-lg q-pb-md">
-    <q-timeline :layout="layout" color="secondary">
+    <q-timeline style="margin-top:20px;" :layout="layout" color="secondary">
       <q-timeline-entry
         title="世萌绿宝石项链赛"
         subtitle="2019.10.20"

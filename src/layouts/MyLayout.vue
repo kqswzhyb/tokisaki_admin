@@ -118,7 +118,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="$router.push('/user/center/2')">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -142,13 +142,13 @@
 
           <q-separator />
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="$router.push('/members')">
             <q-item-section avatar>
               <q-icon name="trending_up" />
             </q-item-section>
 
             <q-item-section>
-              数据统计
+              组员列表
             </q-item-section>
           </q-item>
 

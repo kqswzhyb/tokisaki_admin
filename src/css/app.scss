@@ -20,6 +20,11 @@ $leader:#978bf9;
   background: #f2f2f2;
 }
 
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 .flex-between {
   display: flex;
   justify-content: space-between;
