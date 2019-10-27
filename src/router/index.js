@@ -16,7 +16,12 @@ export default function(/* { store, ssrContext } */) {
     return routerPush.call(this, location).catch(error => error);
   };
   const Router = new VueRouter({
-    scrollBehavior: () => ({ x: 0, y: 0 }),
+    scrollBehavior: to => {
+      if (to.path.includes("/user/messages")) {
+        return { x: 0, y: 900 };
+      }
+      return { x: 0, y: 0 };
+    },
     routes,
 
     // Leave these as is and change from quasar.conf.js instead!

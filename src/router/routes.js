@@ -37,6 +37,14 @@ const routes = [
     component: () => import("layouts/MyLayout.vue"),
     children: [
       {
+        path: "messages/:id",
+        component: () => import("pages/user/Messages.vue"),
+        meta: {
+          title: "我的消息",
+          back: true
+        }
+      },
+      {
         path: "scores/:id",
         component: () => import("pages/user/ScoreDetail.vue"),
         meta: {
