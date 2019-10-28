@@ -32,8 +32,13 @@
           <q-icon
             name="delete"
             class="text-primary"
-            style="font-size: 20px;"
+            style="font-size: 20px;margin-right:15px;"
             @click="alert = true"
+          />
+          <q-icon
+            name="cloud_download"
+            class="text-primary"
+            style="font-size: 20px;margin-right:15px;"
           />
         </div>
       </div>
