@@ -36,8 +36,13 @@
           </q-item-section>
 
           <q-item-section side top>
-            <span @click.stop="openDialog(1)">组长</span>
+            <q-icon name="star" size="sm" style="color:#ff9800;" />
             <span style="color:#ff9800;">1000</span>
+          </q-item-section>
+
+          <q-item-section side top>
+            <span @click.stop="openDialog(1)">组长</span>
+            <span style="color:#000;" @click.stop="openDialog2(0)">正常</span>
           </q-item-section>
         </q-item>
         <q-separator inset="item" />
@@ -56,8 +61,13 @@
           </q-item-section>
 
           <q-item-section side top>
-            <span @click.stop="openDialog(0)">组员</span>
+            <q-icon name="star" size="sm" style="color:#ff9800;" />
             <span style="color:#ff9800;">2000</span>
+          </q-item-section>
+
+          <q-item-section side top>
+            <span @click.stop="openDialog(0)">组员</span>
+            <span class="main" @click.stop="openDialog2(1)">冻结</span>
           </q-item-section>
         </q-item>
       </div>
@@ -78,6 +88,25 @@
             <q-radio v-model="role" :val="0" label="组员" />
             <q-radio v-model="role" :val="1" label="组长" />
           </div>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="确定" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog
+      v-model="dialogShow2"
+      persistent
+      transition-show="scale"
+      transition-hide="scale"
+    >
+      <q-card class="bg-teal text-white" style="width: 300px">
+        <q-card-section>
+          <div class="text-h6">状态更改</div>
+        </q-card-section>
+
+        <q-card-section>
           <div class="q-gutter-sm">
             <q-radio v-model="auth" :val="0" label="正常" />
             <q-radio v-model="auth" :val="1" label="冻结" />
@@ -102,6 +131,7 @@ export default {
       status: "全部",
       options2: ["全部", "正常", "冻结"],
       dialogShow: false,
+      dialogShow2: false,
       role: 0,
       auth: 0
     };
@@ -110,6 +140,10 @@ export default {
     openDialog(type) {
       this.role = type;
       this.dialogShow = true;
+    },
+    openDialog2(type) {
+      this.auth = type;
+      this.dialogShow2 = true;
     }
   }
 };

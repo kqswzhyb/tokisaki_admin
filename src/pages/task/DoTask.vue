@@ -6,15 +6,7 @@
       >
     </div>
     <q-input outlined type="textarea" v-model="form.text" label="内容" />
-    <q-uploader
-      url="http://localhost:4444/upload"
-      style="width:100%;margin:30px 0;"
-      ref="uploader"
-      dark
-      multiple
-      accept="image/*"
-      :max-file-size="1024 * 1024"
-    />
+    <van-uploader style="margin:20px 0;" v-model="form.images" multiple />
     <q-btn
       label="提交"
       style="width:100%;"
@@ -27,6 +19,7 @@
 </template>
 
 <script>
+import { Uploader as VanUploader } from "vant";
 export default {
   name: "doTask",
   data: function() {
@@ -35,6 +28,9 @@ export default {
         text: ""
       }
     };
+  },
+  components: {
+    VanUploader
   }
 };
 </script>

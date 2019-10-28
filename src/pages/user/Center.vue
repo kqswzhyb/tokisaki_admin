@@ -73,6 +73,15 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-item style="margin-top:20px;">
+        <q-item-section top>
+          <q-item-label lines="1">
+            <p class="text-weight-medium">
+              <span style="color:#999;">注册时间：</span> 2019-10-21 22：01
+            </p>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </div>
     <div style="margin-top:50px;">
       <div
@@ -85,7 +94,7 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">最近提交：</span>2019-10-21 22：01
+              <span style="color:#999;">最近提交：</span> 2019-10-21 22：01
             </p>
           </q-item-label>
         </q-item-section>
@@ -158,7 +167,7 @@
             style="margin-bottom:15px;"
             outlined
             v-model="form.origin"
-            label="旧密码"
+            label="原密码"
           />
           <q-input
             style="margin-bottom:15px;"

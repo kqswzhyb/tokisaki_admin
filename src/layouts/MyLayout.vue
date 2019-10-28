@@ -42,7 +42,7 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item clickable @click="$router.push('/home')">
+        <q-item clickable to="/home">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
@@ -50,7 +50,7 @@
             <q-item-label>首页</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$router.push('/rank/short/2')">
+        <q-item clickable to="/rank/short/2">
           <q-item-section avatar>
             <q-icon name="calendar_today" />
           </q-item-section>
@@ -58,7 +58,7 @@
             <q-item-label>短期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$router.push('/rank/long/2')">
+        <q-item clickable to="/rank/long/2">
           <q-item-section avatar>
             <q-icon name="insert_chart_outlined" />
           </q-item-section>
@@ -66,7 +66,7 @@
             <q-item-label>长期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$router.push('/rank/interval')">
+        <q-item clickable to="/rank/interval">
           <q-item-section avatar>
             <q-icon name="update" />
           </q-item-section>
@@ -74,7 +74,7 @@
             <q-item-label>周期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$router.push('/notices?type=0')">
+        <q-item clickable to="/notices?type=0">
           <q-item-section avatar>
             <q-icon name="library_books" />
           </q-item-section>
@@ -82,7 +82,7 @@
             <q-item-label>短期任务</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable @click="$router.push('/notices?type=1')">
+        <q-item clickable to="/notices?type=1">
           <q-item-section avatar>
             <q-icon name="event_note" />
           </q-item-section>
@@ -98,17 +98,22 @@
         style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd"
       >
         <q-list padding>
-          <q-item clickable v-ripple @click="$router.push('/user/messages/2')">
+          <q-item clickable v-ripple to="/user/messages/2">
             <q-item-section avatar>
               <q-icon name="sms" />
             </q-item-section>
 
             <q-item-section>
-              我的消息
+              <div>
+                我的消息
+                <q-badge v-if="badge" transparent align="middle" color="red">
+                  {{ badge }}
+                </q-badge>
+              </div>
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/notices?type=3')">
+          <q-item clickable v-ripple to="/notices?type=3">
             <q-item-section avatar>
               <q-icon name="assignment" />
             </q-item-section>
@@ -118,7 +123,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/user/scores/7')">
+          <q-item clickable v-ripple to="/user/scores/7">
             <q-item-section avatar>
               <q-icon name="star" />
             </q-item-section>
@@ -128,7 +133,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/user/center/2')">
+          <q-item clickable v-ripple to="/user/center/2">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -138,7 +143,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/task/create')">
+          <q-item clickable v-ripple to="/task/create">
             <q-item-section avatar>
               <q-icon name="build" />
             </q-item-section>
@@ -148,7 +153,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="$router.push('/members')">
+          <q-item clickable v-ripple to="/members">
             <q-item-section avatar>
               <q-icon name="people" />
             </q-item-section>
@@ -160,7 +165,7 @@
 
           <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="info" />
+              <q-icon name="logout" />
             </q-item-section>
 
             <q-item-section>
@@ -196,7 +201,8 @@ export default {
   data() {
     return {
       leftDrawerOpen: false,
-      rightDrawerOpen: false
+      rightDrawerOpen: false,
+      badge: 3
     };
   }
 };

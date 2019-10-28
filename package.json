@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
+    "@vant/touch-emulator": "^1.1.0",
     "axios": "^0.18.1",
     "quasar": "^1.0.0",
     "vant": "^2.2.9"
