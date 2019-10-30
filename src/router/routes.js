@@ -85,6 +85,20 @@ const routes = [
     ]
   },
   {
+    path: "/groups",
+    component: () => import("layouts/MyLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/Group.vue"),
+        meta: {
+          title: "小组管理",
+          back: true
+        }
+      }
+    ]
+  },
+  {
     path: "/task",
     component: () => import("layouts/MyLayout.vue"),
     children: [

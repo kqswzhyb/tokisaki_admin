@@ -163,6 +163,16 @@
             </q-item-section>
           </q-item>
 
+          <q-item clickable v-ripple to="/groups">
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+
+            <q-item-section>
+              小组管理
+            </q-item-section>
+          </q-item>
+
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="logout" />
