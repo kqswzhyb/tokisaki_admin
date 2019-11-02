@@ -56,7 +56,14 @@ export default {
   methods: {
     ReplaceUrl(text, url) {
       if (url) {
-        return text + '<a href="/#' + url + '">' + "查看详情" + "</a>";
+        return (
+          text +
+          '<a href="/#' +
+          url +
+          '" style="text-decoration: underline;color: #00c;">' +
+          "查看详情" +
+          "</a>"
+        );
       }
       return text;
     }

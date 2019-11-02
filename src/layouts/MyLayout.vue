@@ -90,6 +90,35 @@
             <q-item-label>长期任务</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable to="/task/create">
+          <q-item-section avatar>
+            <q-icon name="build" />
+          </q-item-section>
+
+          <q-item-section>
+            创建任务
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/members">
+          <q-item-section avatar>
+            <q-icon name="people" />
+          </q-item-section>
+
+          <q-item-section>
+            组员列表
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/groups">
+          <q-item-section avatar>
+            <q-icon name="settings" />
+          </q-item-section>
+
+          <q-item-section>
+            小组管理
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
     <q-drawer v-model="rightDrawerOpen" side="right" overlay elevated>
@@ -140,36 +169,6 @@
 
             <q-item-section>
               个人中心
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple to="/task/create">
-            <q-item-section avatar>
-              <q-icon name="build" />
-            </q-item-section>
-
-            <q-item-section>
-              创建任务
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple to="/members">
-            <q-item-section avatar>
-              <q-icon name="people" />
-            </q-item-section>
-
-            <q-item-section>
-              组员列表
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple to="/groups">
-            <q-item-section avatar>
-              <q-icon name="settings" />
-            </q-item-section>
-
-            <q-item-section>
-              小组管理
             </q-item-section>
           </q-item>
 

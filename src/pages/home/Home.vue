@@ -27,12 +27,28 @@
         </div>
         <div style="color:#fff;" class="text-h5">总积分</div>
       </div>
-      <div class="tag2">
+      <div class="tag" style="background-color:#e66457;">
         <div class="flex-between">
           <q-icon name="emoji_events" size="lg" color="white" />
           <span style="color:#fff;" class="text-h5">3/344</span>
         </div>
         <div style="color:#fff;" class="text-h5">总排名</div>
+      </div>
+    </div>
+    <div class="text-center flex-between" style="margin-bottom:20px;">
+      <div class="tag" style="background-color:#21BA45;">
+        <div class="flex-between">
+          <q-icon name="event_note" size="lg" color="white" />
+          <span style="color:#fff;" class="text-h5">3/444</span>
+        </div>
+        <div style="color:#fff;" class="text-h5">周排名</div>
+      </div>
+      <div class="tag" style="background-color:#26A69A;">
+        <div class="flex-between">
+          <q-icon name="update" size="lg" color="white" />
+          <span style="color:#fff;" class="text-h5">3/344</span>
+        </div>
+        <div style="color:#fff;" class="text-h5">月排名</div>
       </div>
     </div>
     <div>

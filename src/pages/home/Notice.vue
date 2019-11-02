@@ -131,7 +131,13 @@ export default {
     ReplaceUrl(text) {
       var re = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/gi;
       var s = text.replace(re, a => {
-        return '<a href="' + a + '" target=_blank>' + a + "</a>";
+        return (
+          '<a href="' +
+          a +
+          '" target="_blank" style="text-decoration: underline;color: #00c;">' +
+          a +
+          "</a>"
+        );
       });
       return s;
     },

@@ -166,18 +166,24 @@
           <q-input
             style="margin-bottom:15px;"
             outlined
+            type="password"
+            onkeydown="if(event.keyCode==32) return false"
             v-model="form.origin"
             label="原密码"
           />
           <q-input
             style="margin-bottom:15px;"
             outlined
+            type="password"
+            onkeydown="if(event.keyCode==32) return false"
             v-model="form.new"
             label="新密码"
           />
           <q-input
             style="margin-bottom:15px;"
             outlined
+            type="password"
+            onkeydown="if(event.keyCode==32) return false"
             v-model="form.confirm"
             label="确认密码"
           />
