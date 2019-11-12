@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     async onSubmit() {
-      if (!this.form.username && !this.form.password) {
+      if (!this.form.username || !this.form.password) {
         Toast.fail("用户名和密码不能为空");
         return;
       }

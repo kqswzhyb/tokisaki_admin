@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 import { getToken } from "../utils/auth";
+import NProgress from "nprogress"; // progress bar
+import "nprogress/nprogress.css"; // progress bar style
 
 import routes from "./routes";
 
@@ -47,6 +49,7 @@ export default function({ store }) {
   // });
   const whiteList = ["/login"]; // no redirect whitelist
   router.beforeEach(async (to, from, next) => {
+    NProgress.start();
     // determine whether the user has logged in
     const hasToken = getToken();
 
@@ -54,6 +57,7 @@ export default function({ store }) {
       if (to.path === "/login") {
         // if is logged in, redirect to the home page
         next({ path: "/home" });
+        NProgress.done();
       } else {
         const hasGetUserInfo = store.getters.info;
         if (!hasGetUserInfo) {
@@ -72,6 +76,7 @@ export default function({ store }) {
           // remove token and go to login page to re-login
           await store.dispatch("user/resetToken");
           next(`/login`);
+          NProgress.done();
         }
       }
     } else {
@@ -83,8 +88,13 @@ export default function({ store }) {
       } else {
         // other pages that do not have permission to access are redirected to the login page.
         next(`/login`);
+        NProgress.done();
       }
     }
+  });
+  router.afterEach(() => {
+    // finish progress bar
+    NProgress.done();
   });
 
   return router;
