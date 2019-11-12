@@ -1,7 +1,14 @@
 const routes = [
   {
     path: "/",
-    redirect: "/home"
+    redirect: "/login"
+  },
+  {
+    path: "/login",
+    component: () => import("pages/login/Login.vue"),
+    meta: {
+      title: "登录"
+    }
   },
   {
     path: "/home",
@@ -73,13 +80,17 @@ const routes = [
   {
     path: "/members",
     component: () => import("layouts/MyLayout.vue"),
+    meta: {
+      role: 2
+    },
     children: [
       {
         path: "",
         component: () => import("pages/Members.vue"),
         meta: {
           title: "组员列表",
-          back: true
+          back: true,
+          role: 2
         }
       }
     ]
@@ -87,13 +98,17 @@ const routes = [
   {
     path: "/groups",
     component: () => import("layouts/MyLayout.vue"),
+    meta: {
+      role: 3
+    },
     children: [
       {
         path: "",
         component: () => import("pages/Group.vue"),
         meta: {
           title: "小组管理",
-          back: true
+          back: true,
+          role: 3
         }
       }
     ]
@@ -103,26 +118,11 @@ const routes = [
     component: () => import("layouts/MyLayout.vue"),
     children: [
       {
-        path: "short/:id",
-        component: () => import("pages/task/ShortTask.vue"),
-        meta: {
-          title: "短期任务",
-          back: true
-        }
-      },
-      {
-        path: "long/:id",
-        component: () => import("pages/task/LongTask.vue"),
-        meta: {
-          title: "长期任务",
-          back: true
-        }
-      },
-      {
         path: "create",
         component: () => import("pages/task/CreateTask.vue"),
         meta: {
           title: "创建任务",
+          role: 3,
           back: true
         }
       },
@@ -131,6 +131,7 @@ const routes = [
         component: () => import("pages/task/EditTask.vue"),
         meta: {
           title: "修改任务",
+          role: 3,
           back: true
         }
       },

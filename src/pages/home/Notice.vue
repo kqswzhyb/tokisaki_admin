@@ -67,13 +67,6 @@
         @click="$router.push('/user/commit/2')"
       />
       <q-btn
-        label="小组情况"
-        color="info"
-        glossy
-        v-close-popup
-        @click="$router.push('/task/short/2')"
-      />
-      <q-btn
         label="本次排行"
         color="white"
         glossy
@@ -130,16 +123,18 @@ export default {
   methods: {
     ReplaceUrl(text) {
       var re = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/gi;
-      var s = text.replace(re, a => {
-        return (
-          '<a href="' +
-          a +
-          '" target="_blank" style="text-decoration: underline;color: #00c;">' +
-          a +
-          "</a>"
-        );
-      });
-      return s;
+      if (re.test(text)) {
+        return text.replace(re, a => {
+          return (
+            '<a href="' +
+            a +
+            '" target=_blank style="text-decoration: underline;color: #00c;">' +
+            a +
+            "</a>"
+          );
+        });
+      }
+      return text;
     },
     getImg(item, index) {
       ImagePreview({

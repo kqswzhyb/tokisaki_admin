@@ -90,7 +90,7 @@
             <q-item-label>长期任务</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable to="/task/create">
+        <q-item clickable v-if="roles >= 3" to="/task/create">
           <q-item-section avatar>
             <q-icon name="build" />
           </q-item-section>
@@ -100,7 +100,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/members">
+        <q-item clickable v-if="roles >= 2" to="/members">
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
@@ -110,7 +110,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/groups">
+        <q-item clickable v-if="roles >= 3" to="/groups">
           <q-item-section avatar>
             <q-icon name="settings" />
           </q-item-section>
@@ -172,7 +172,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="logout">
             <q-item-section avatar>
               <q-icon name="logout" />
             </q-item-section>
@@ -190,9 +190,11 @@
       >
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            <img src="../assets/default_user.jpg" />
           </q-avatar>
-          <div class="text-weight-bold">玄机妙算</div>
+          <div class="q-ml-sm text-weight-bold">
+            {{ info ? info.username : "未登录" }}
+          </div>
         </div>
       </q-img>
     </q-drawer>
@@ -213,6 +215,20 @@ export default {
       rightDrawerOpen: false,
       badge: 3
     };
+  },
+  computed: {
+    info() {
+      return this.$store.state.user.info;
+    },
+    roles() {
+      return this.$store.state.user.info.roles.length;
+    }
+  },
+  methods: {
+    async logout() {
+      await this.$store.dispatch("user/logout");
+      this.$router.push(`/login`);
+    }
   }
 };
 </script>
