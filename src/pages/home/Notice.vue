@@ -27,7 +27,7 @@
             name="edit"
             class="text-primary"
             style="font-size: 20px;margin-right:15px;"
-            @click="$router.push('/task/edit/2')"
+            @click="$router.push(`/task/edit/${data.id}`)"
           />
           <q-icon
             name="cloud_download"
@@ -50,6 +50,7 @@
         <span class="font">任务结束时间：</span> {{ data.endDate | prettyDate }}
       </div>
     </q-card-section>
+    <q-separator />
 
     <q-card-section v-html="ReplaceUrl(data.taskDetail)" />
     <div
