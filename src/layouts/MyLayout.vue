@@ -50,7 +50,7 @@
             <q-item-label>首页</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable to="/rank/short/2">
+        <q-item clickable to="/rank/short">
           <q-item-section avatar>
             <q-icon name="calendar_today" />
           </q-item-section>
@@ -58,7 +58,7 @@
             <q-item-label>短期排行</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable to="/rank/long/2">
+        <q-item clickable to="/rank/long">
           <q-item-section avatar>
             <q-icon name="insert_chart_outlined" />
           </q-item-section>

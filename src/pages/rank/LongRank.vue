@@ -6,18 +6,20 @@
     >
       <q-select
         filled
-        v-model="name"
-        :options="stringOptions"
+        v-model="detail"
+        :option-value="item => item.id"
+        :option-label="item => item.taskName"
+        :options="options"
         style="width: 44vw;"
         behavior="menu"
       />
     </div>
     <div style="margin-bottom:20px;">
       <div class="text-weight-medium" style="margin-bottom:5px;">
-        本次任务起始时间: 2019.10.19 23:00:00
+        本次任务起始时间: {{ detail.startDate | prettyDate }}
       </div>
       <div class="text-weight-medium">
-        本次任务终止时间: 2019.10.21 09:00:00
+        本次任务终止时间: {{ detail.endDate | prettyDate }}
       </div>
     </div>
 
@@ -162,18 +164,57 @@
 </template>
 
 <script>
-const stringOptions = ["众筹集资", "征集应援词", "征集手绘作品"];
+import { Toast } from "vant";
 export default {
   name: "longRank",
   data() {
     return {
-      tasks: [],
-      task: "",
-      name: stringOptions[0],
-      stringOptions,
-      options: stringOptions,
+      value: "",
+      detail: {},
+      options: [],
       tab: "one"
     };
+  },
+  watch: {
+    detail: {
+      handler: function(val) {
+        this.value = val.id;
+      }
+    }
+  },
+  created() {
+    this.$store.commit("app/openLoading", true);
+    this.$axios
+      .get("/v1/task/search/?taskType=LongTerm")
+      .then(res => {
+        if (res.status === 200) {
+          this.options = res.data.sort(
+            (a, b) =>
+              new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+          );
+          if (this.$route.query.id) {
+            let result = this.options.find(
+              item => item.id === this.$route.query.id
+            );
+            if (result) {
+              this.detail = result;
+              this.$store.commit("app/openLoading", false);
+            } else {
+              this.$router.push("/404");
+            }
+          } else {
+            this.value = this.options[0].id;
+            this.detail = this.options[0];
+            this.$store.commit("app/openLoading", false);
+          }
+        }
+      })
+      .catch(() => {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+      });
   },
   methods: {}
 };

@@ -1,5 +1,5 @@
 import { getToken, removeToken } from "../../utils/auth";
-import router, { resetRouter } from "../../router/index";
+import { resetRouter, routerOther } from "../../router/index";
 import routes from "../../router/routes";
 import axios from "axios";
 
@@ -36,7 +36,7 @@ const actions = {
           commit("SET_TOKEN", "");
           removeToken();
           resetRouter(routes);
-          router.push(`/login`);
+          routerOther().push(`/login`);
           reject(error);
         });
     });

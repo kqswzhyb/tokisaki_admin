@@ -76,7 +76,13 @@
         glossy
         text-color="black"
         v-close-popup
-        @click="$router.push('/rank/short/2')"
+        @click="
+          $router.push(
+            `/rank/${data.taskType === 'ShortTerm' ? 'short' : 'long'}?id=${
+              data.id
+            }`
+          )
+        "
       />
       <q-btn
         label="去完成任务"
@@ -90,7 +96,7 @@
 </template>
 
 <script>
-import { ImagePreview } from "vant";
+import { ImagePreview, Toast } from "vant";
 export default {
   name: "notice",
   data() {
@@ -121,7 +127,10 @@ export default {
         }
       })
       .catch(() => {
-        this.$message.error("请求出错,请检查网络或刷新重试！");
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
       });
   },
   methods: {

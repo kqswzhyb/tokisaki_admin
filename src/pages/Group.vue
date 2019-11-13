@@ -119,7 +119,10 @@ export default {
         }
       })
       .catch(() => {
-        Toast("请求出错,请检查网络或刷新重试！");
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
       });
   },
   methods: {
@@ -145,7 +148,10 @@ export default {
         this.dialogShow2 = false;
       } catch (err) {
         console.log(err);
-        Toast("请求出错,请检查网络或刷新重试！");
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
       }
     },
     async create() {
@@ -167,7 +173,10 @@ export default {
         Toast.success("创建成功");
       } catch (err) {
         console.log(err);
-        Toast("请求出错,请检查网络或刷新重试！");
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
       }
     },
     async onSubmit() {
@@ -184,7 +193,10 @@ export default {
           this.dialogShow = false;
         } catch (err) {
           console.log(err);
-          Toast("请求出错,请检查网络或刷新重试！");
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
         }
       }
       this.dialogFormVisible = false;

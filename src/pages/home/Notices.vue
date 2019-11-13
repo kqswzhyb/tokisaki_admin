@@ -70,7 +70,10 @@ export default {
           );
           this.tasks = res.data;
         } catch (err) {
-          Toast("请求出错,请检查网络或刷新重试！");
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
         }
         break;
       case 1:
@@ -78,7 +81,10 @@ export default {
           let res = await this.$axios.get("/v1/task/search/?taskType=LongTerm");
           this.tasks = res.data;
         } catch (err) {
-          Toast("请求出错,请检查网络或刷新重试！");
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
         }
         break;
     }

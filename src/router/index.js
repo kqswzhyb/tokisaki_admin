@@ -24,9 +24,14 @@ const createRouter = routes2 =>
     routes: routes2
   });
 const router = createRouter(routes);
+
 export function resetRouter(routes) {
   const newRouter = createRouter(routes);
   router.matcher = newRouter.matcher; // reset router
+}
+
+export function routerOther() {
+  return router;
 }
 
 export default function({ store }) {

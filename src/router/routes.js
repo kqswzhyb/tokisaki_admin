@@ -150,18 +150,18 @@ const routes = [
     component: () => import("layouts/MyLayout.vue"),
     children: [
       {
-        path: "short/:id",
+        path: "short",
         component: () => import("pages/rank/ShortRank.vue"),
         meta: {
-          title: "短期积分排行",
+          title: "短期任务排行",
           back: true
         }
       },
       {
-        path: "long/:id",
+        path: "long",
         component: () => import("pages/rank/LongRank.vue"),
         meta: {
-          title: "长期积分排行",
+          title: "长期任务排行",
           back: true
         }
       },

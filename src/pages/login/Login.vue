@@ -72,7 +72,9 @@ export default {
           }
         );
         if (res.status !== 200) {
-          this.$message.error("帐号或密码错误");
+          Toast({
+            message: "帐号或密码错误"
+          });
           this.loading = false;
         } else {
           this.$store.commit("user/SET_TOKEN", res.data.token);
@@ -81,7 +83,9 @@ export default {
           this.loading = false;
         }
       } catch {
-        this.$message.error("请求出错");
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！"
+        });
         this.loading = false;
       }
     }
