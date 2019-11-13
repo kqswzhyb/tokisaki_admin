@@ -3,25 +3,31 @@
     <div class="q-mb-xl">
       <q-btn color="primary" label="新建小组" @click="dialogShow3 = true" />
     </div>
-    <div class=" row justify-around">
-      <q-card class="q-mb-md" v-for="item in groups" :key="item.id">
+    <div class=" row justify-between">
+      <q-card class="q-mb-lg" v-for="item in groups" :key="item.id">
         <q-card-section class="bg-teal text-white">
           <div class="text-h6 row justify-between">
-            <span>{{ item.name }}</span
-            ><span>{{ item.status === 0 ? "正常" : "停用" }}</span>
+            <span>{{ item.groupName }}</span
+            ><span
+              :style="{ color: item.groupStatus === 'Normal' ? '#fff' : 'red' }"
+              >{{ item.groupStatus === "Normal" ? "正常" : "停用" }}</span
+            >
           </div>
           <div class="text-subtitle2" style="color:#ff9800;">
-            {{ item.code }}
+            {{ item.groupInviteCode }}
           </div>
         </q-card-section>
 
         <q-separator />
 
         <q-card-actions align="right">
-          <q-btn flat color="deep-orange" @click="dialogShow2 = true"
+          <q-btn flat color="deep-orange" @click="openDialog2(item.id)"
             >邀请码</q-btn
           >
-          <q-btn flat style="color: #FF0080;" @click="openDialog(item.status)"
+          <q-btn
+            flat
+            style="color: #FF0080;"
+            @click="openDialog(item.id, item.groupStatus)"
             >状态管理</q-btn
           >
         </q-card-actions>
@@ -40,13 +46,12 @@
 
         <q-card-actions align="right">
           <q-btn flat label="取消" color="primary" v-close-popup />
-          <q-btn flat label="确定" color="primary" v-close-popup />
+          <q-btn flat label="确定" color="primary" @click="changeCode" />
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog
       v-model="dialogShow"
-      persistent
       transition-show="scale"
       transition-hide="scale"
     >
@@ -57,13 +62,13 @@
 
         <q-card-section>
           <div class="q-gutter-sm">
-            <q-radio v-model="status" :val="0" label="正常" />
-            <q-radio v-model="status" :val="1" label="冻结" />
+            <q-radio v-model="status" val="Normal" label="正常" />
+            <q-radio v-model="status" val="Frozen" label="停用" />
           </div>
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="确定" v-close-popup />
+          <q-btn flat label="确定" @click="onSubmit" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -79,7 +84,7 @@
 
         <q-card-actions align="right">
           <q-btn flat label="取消" color="primary" v-close-popup />
-          <q-btn flat label="确定" color="primary" v-close-popup />
+          <q-btn flat label="确定" color="primary" @click="create" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -87,37 +92,102 @@
 </template>
 
 <script>
+import { Toast } from "vant";
 export default {
   name: "group",
   data() {
     return {
-      groups: [
-        {
-          id: 1,
-          name: "1组",
-          code: "2D4FZZ213",
-          status: 0
-        },
-        {
-          id: 2,
-          name: "2组",
-          code: "2D4FZZ213",
-          status: 1
-        }
-      ],
+      groups: [],
       form: {
         name: ""
       },
       dialogShow3: false,
       dialogShow2: false,
       dialogShow: false,
-      status: 0
+      status: 0,
+      selectedId: ""
     };
   },
+  created() {
+    this.$store.commit("app/openLoading", true);
+    this.$axios
+      .get("/v1/usergroup/listall")
+      .then(res => {
+        if (res.status === 200) {
+          this.groups = res.data;
+          this.$store.commit("app/openLoading", false);
+        }
+      })
+      .catch(() => {
+        Toast("请求出错,请检查网络或刷新重试！");
+      });
+  },
   methods: {
-    openDialog(type) {
+    openDialog(id, type) {
       this.status = type;
+      this.selectedId = id;
       this.dialogShow = true;
+    },
+    openDialog2(id) {
+      this.selectedId = id;
+      this.dialogShow2 = true;
+    },
+    async changeCode() {
+      try {
+        const res = await this.$axios.put(
+          `/v1/usergroup/updateInviteCode/${this.selectedId}`
+        );
+        const index = this.groups.findIndex(
+          item => item.id === this.selectedId
+        );
+        this.groups[index].groupInviteCode = res.data.groupInviteCode;
+        Toast.success("更换成功");
+        this.dialogShow2 = false;
+      } catch (err) {
+        console.log(err);
+        Toast("请求出错,请检查网络或刷新重试！");
+      }
+    },
+    async create() {
+      try {
+        await this.$axios.post(
+          `/v1/usergroup/save`,
+          {
+            groupName: this.form.name
+          },
+          {
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          }
+        );
+        const res = await this.$axios.get("/v1/usergroup/listall");
+        this.groups = res.data;
+        this.dialogShow3 = false;
+        Toast.success("创建成功");
+      } catch (err) {
+        console.log(err);
+        Toast("请求出错,请检查网络或刷新重试！");
+      }
+    },
+    async onSubmit() {
+      const index = this.groups.findIndex(item => item.id === this.selectedId);
+      if (this.groups[index].groupStatus !== this.selectStatus) {
+        try {
+          await this.$axios.put(
+            `/v1/usergroup/updateGroupStatus/${this.selectedId}/?taskType=${
+              this.status
+            }`
+          );
+          this.groups[index].groupStatus = this.status;
+          Toast.success("修改成功");
+          this.dialogShow = false;
+        } catch (err) {
+          console.log(err);
+          Toast("请求出错,请检查网络或刷新重试！");
+        }
+      }
+      this.dialogFormVisible = false;
     }
   }
 };

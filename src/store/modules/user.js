@@ -36,7 +36,7 @@ const actions = {
           commit("SET_TOKEN", "");
           removeToken();
           resetRouter(routes);
-          router.push(`/login?redirect=dashboard`);
+          router.push(`/login`);
           reject(error);
         });
     });

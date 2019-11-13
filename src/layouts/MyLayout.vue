@@ -200,14 +200,19 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view v-show="!loading" />
+      <Loading v-show="loading" />
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
+import Loading from "../pages/Loading";
 export default {
   name: "MyLayout",
+  components: {
+    Loading
+  },
 
   data() {
     return {
@@ -222,6 +227,9 @@ export default {
     },
     roles() {
       return this.$store.state.user.info.roles.length;
+    },
+    loading() {
+      return this.$store.state.app.loading;
     }
   },
   methods: {

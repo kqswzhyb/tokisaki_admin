@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import user from "./modules/user";
 import permission from "./modules/permission";
+import app from "./modules/app";
 import getters from "./getters";
 
 Vue.use(Vuex);
@@ -16,7 +17,8 @@ export default function(/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       user,
-      permission
+      permission,
+      app
     },
     getters,
     // enable strict mode (adds overhead!)

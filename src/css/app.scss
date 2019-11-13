@@ -1,10 +1,14 @@
 // app global css in SCSS form
 $mainColor:#e66457;
 $leader:#978bf9;
+$font:#505050;
 
 
 .main {
   color: $mainColor;
+}
+.font {
+  color: $font;
 }
 .main-b {
   background-color: $mainColor;
