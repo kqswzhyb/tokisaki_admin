@@ -114,6 +114,20 @@ const routes = [
     ]
   },
   {
+    path: "/reward",
+    component: () => import("layouts/MyLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/Reward.vue"),
+        meta: {
+          title: "积分奖励",
+          back: true
+        }
+      }
+    ]
+  },
+  {
     path: "/task",
     component: () => import("layouts/MyLayout.vue"),
     children: [

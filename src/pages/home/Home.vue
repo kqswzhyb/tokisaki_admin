@@ -85,6 +85,29 @@
         </q-card-section>
       </q-card>
     </div>
+    <div>
+      <div class="flex-between" style="margin-bottom:20px;">
+        <span class="text-h6">积分奖励</span>
+      </div>
+      <q-card class="my-card" style="margin-bottom:30px;">
+        <q-card-section
+          @click="$router.push('/reward')"
+          style="position:relative;"
+        >
+          <img
+            src="~assets/svgs/working.svg"
+            style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
+          />
+          <div class="text-h6" style="color:#505050;">
+            积分奖励一览
+          </div>
+          <div class="text-subtitle2" style="color:#808080;">
+            by <span class="main">玄机妙算</span>
+            2019年10月21日 22:00:00
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
   </div>
 </template>
 

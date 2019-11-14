@@ -72,3 +72,10 @@ $font:#505050;
   padding:15px;
   background-color: #d4d0d0;
 }
+
+.van-image-preview {
+  z-index: 9999 !important;
+}
+.van-overlay, .van-image-preview__overlay {
+  z-index: 9999 !important;
+}
