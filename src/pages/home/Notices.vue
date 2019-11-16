@@ -87,6 +87,17 @@ export default {
           });
         }
         break;
+      case 2:
+        try {
+          let res = await this.$axios.get("/v1/task");
+          this.tasks = res.data;
+        } catch (err) {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        }
+        break;
     }
     this.tasks.sort(
       (a, b) =>

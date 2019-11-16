@@ -20,8 +20,18 @@
     </q-carousel>
 
     <q-card-section>
-      <div class="text-h5" style="display:flex;justify-content:space-between;">
+      <div class="text-h5 flex-between">
         {{ data.taskName }}
+        <img
+          v-if="new Date(data.endDate).getTime() > currentDate.getTime()"
+          src="~assets/svgs/working.svg"
+          style="width:40px;height:40px"
+        />
+        <img
+          v-else
+          src="~assets/svgs/finish.svg"
+          style="width:40px;height:40px;"
+        />
         <div>
           <q-icon
             name="edit"
@@ -36,7 +46,7 @@
           />
         </div>
       </div>
-      <div class="text-subtitle2 text-right">
+      <div class="text-subtitle2 text-left">
         by
         <span class="main">{{
           data.createUser && data.createUser.username
@@ -86,6 +96,7 @@
         "
       />
       <q-btn
+        v-if="new Date(data.endDate).getTime() > currentDate.getTime()"
         label="去完成任务"
         color="primary"
         glossy
@@ -102,6 +113,7 @@ export default {
   name: "notice",
   data() {
     return {
+      currentDate: new Date(),
       slide: 0,
       confirm: false,
       data: {},

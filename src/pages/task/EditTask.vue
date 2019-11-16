@@ -110,7 +110,7 @@
       </div>
 
       <q-btn
-        label="发布"
+        label="修改"
         style="width:95%;"
         size="md"
         type="submit"

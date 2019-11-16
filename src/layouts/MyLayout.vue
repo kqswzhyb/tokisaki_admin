@@ -37,6 +37,7 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
+      :width="233"
       show-if-above
       bordered
       content-class="bg-grey-2"
@@ -121,10 +122,16 @@
         </q-item>
       </q-list>
     </q-drawer>
-    <q-drawer v-model="rightDrawerOpen" side="right" overlay elevated>
+    <q-drawer
+      v-model="rightDrawerOpen"
+      :width="233"
+      side="right"
+      overlay
+      elevated
+    >
       <!-- drawer content -->
       <q-scroll-area
-        style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd"
+        style="height: calc(100% - 131px); margin-top: 131px; border-right: 1px solid #ddd"
       >
         <q-list padding>
           <q-item clickable v-ripple to="/user/messages/2">
@@ -142,7 +149,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/notices?type=3">
+          <q-item clickable v-ripple to="/notices?type=2">
             <q-item-section avatar>
               <q-icon name="assignment" />
             </q-item-section>
@@ -185,14 +192,14 @@
       </q-scroll-area>
       <q-img
         class="absolute-top"
-        src="https://cdn.quasar.dev/img/material.png"
-        style="height: 150px"
+        :ratio="16 / 9"
+        :src="require('../assets/bg.jpg')"
       >
         <div class="absolute-bottom bg-transparent">
-          <q-avatar size="56px" class="q-mb-sm">
+          <q-avatar size="44px" class="q-mb-sm">
             <img src="../assets/default_user.jpg" />
           </q-avatar>
-          <div class="q-ml-sm text-weight-bold">
+          <div class="q-ml-xs text-weight-bold" style="color:#fb7266;">
             {{ info ? info.username : "未登录" }}
           </div>
         </div>
