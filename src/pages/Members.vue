@@ -65,10 +65,17 @@
           <q-separator inset="item" v-if="index !== data.length - 1" />
         </div>
       </div>
-      <div v-else class="flex-center" style="height:calc(100vh - 138px);">
-        <van-loading type="spinner" color="#000" size="66px" vertical
-          ><span style="font-size:24px;">加载中...</span></van-loading
-        >
+      <div
+        v-else
+        class="flex-center column"
+        style="height:calc(100vh - 138px);"
+      >
+        <div class="balls">
+          <div />
+          <div />
+          <div />
+        </div>
+        <p class="tip">加载中...</p>
       </div>
     </q-list>
     <div v-else class="flex-center" style="height:calc(100vh - 138px);">
@@ -122,16 +129,13 @@
 </template>
 
 <script>
-import { Toast, Loading as VanLoading } from "vant";
+import { Toast } from "vant";
 const groupAll = { id: 0, groupName: "全部" };
 const statusAll = {
   value: "All",
   label: "全部"
 };
 export default {
-  components: {
-    VanLoading
-  },
   name: "members",
   data() {
     return {

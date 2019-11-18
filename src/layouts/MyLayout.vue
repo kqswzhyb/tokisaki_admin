@@ -196,10 +196,10 @@
         :src="require('../assets/bg.jpg')"
       >
         <div class="absolute-bottom bg-transparent">
-          <q-avatar size="44px" class="q-mb-sm">
+          <q-avatar size="44px" class="q-mb-xs q-mt-xs">
             <img src="../assets/default_user.jpg" />
           </q-avatar>
-          <div class="q-ml-xs text-weight-bold" style="color:#fb7266;">
+          <div class="q-ml-xs text-weight-bold" style="color:#505050;">
             {{ info ? info.username : "未登录" }}
           </div>
         </div>
