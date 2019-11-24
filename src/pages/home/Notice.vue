@@ -79,7 +79,13 @@
         color="warning"
         glossy
         v-close-popup
-        @click="$router.push('/user/commit/2')"
+        @click="
+          $router.push(
+            `/user/commit/${$route.params.id}?uid=${
+              $store.state.user.info.user.id
+            }`
+          )
+        "
       />
       <q-btn
         label="本次排行"
@@ -101,7 +107,7 @@
         color="primary"
         glossy
         v-close-popup
-        @click="$router.push('/task/do/2')"
+        @click="$router.push(`/task/do/${data.id}?name=${data.taskName}`)"
       />
     </q-card-actions>
   </div>
@@ -117,12 +123,7 @@ export default {
       slide: 0,
       confirm: false,
       data: {},
-      images: [
-        "https://cdn.quasar.dev/img/mountains.jpg",
-        "https://cdn.quasar.dev/img/parallax1.jpg",
-        "https://cdn.quasar.dev/img/parallax2.jpg",
-        "https://cdn.quasar.dev/img/quasar.jpg"
-      ]
+      images: []
     };
   },
   created() {
@@ -132,6 +133,17 @@ export default {
       .then(res => {
         if (res.status === 200) {
           this.data = res.data;
+          if (res.data.taskAttachment) {
+            res.data.taskAttachment.forEach(item => {
+              this.images.push(
+                `${this.$baseURL}/${item.attachment.attachType
+                  .slice(0, 1)
+                  .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                  item.attachment.attachName
+                }.${item.attachment.attachExtName}`
+              );
+            });
+          }
           this.$store.commit("app/openLoading", false);
         }
         if (res.status === 202) {

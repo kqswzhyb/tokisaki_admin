@@ -135,8 +135,11 @@
       >
         <q-list padding>
           <q-item clickable v-ripple to="/user/messages/2">
-            <q-item-section avatar>
-              <q-icon name="sms" />
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/message.svg"
+                style="font-size:20px;"
+              />
             </q-item-section>
 
             <q-item-section>
@@ -150,8 +153,11 @@
           </q-item>
 
           <q-item clickable v-ripple to="/notices?type=2">
-            <q-item-section avatar>
-              <q-icon name="assignment" />
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/task.svg"
+                style="font-size:20px;"
+              />
             </q-item-section>
 
             <q-item-section>
@@ -160,8 +166,11 @@
           </q-item>
 
           <q-item clickable v-ripple to="/user/scores/7">
-            <q-item-section avatar>
-              <q-icon name="star" />
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/empty-star.svg"
+                style="font-size:20px;"
+              />
             </q-item-section>
 
             <q-item-section>
@@ -169,9 +178,16 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/user/center/2">
-            <q-item-section avatar>
-              <q-icon name="person" />
+          <q-item
+            clickable
+            v-ripple
+            :to="`/user/center/${this.$store.state.user.info.user.id}`"
+          >
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/person.svg"
+                style="font-size:20px;"
+              />
             </q-item-section>
 
             <q-item-section>
@@ -180,8 +196,11 @@
           </q-item>
 
           <q-item clickable v-ripple @click="logout">
-            <q-item-section avatar>
-              <q-icon name="logout" />
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/logout.svg"
+                style="font-size:20px;"
+              />
             </q-item-section>
 
             <q-item-section>
@@ -200,7 +219,7 @@
             <img src="../assets/default_user.jpg" />
           </q-avatar>
           <div class="q-ml-xs text-weight-bold" style="color:#505050;">
-            {{ info ? info.username : "未登录" }}
+            {{ info ? info.user.nickName : "未登录" }}
           </div>
         </div>
       </q-img>

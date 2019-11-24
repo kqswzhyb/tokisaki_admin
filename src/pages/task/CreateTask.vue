@@ -22,7 +22,7 @@
         label="积分"
         :rules="[
           val =>
-            (val && val.length > 0 && val.indexOf('-') === -1) ||
+            (val && val.indexOf('-') === -1 && val.indexOf('.') === -1) ||
             '请输入正整数或零'
         ]"
       />
@@ -80,6 +80,7 @@
             <q-popup-proxy transition-show="scale" transition-hide="scale">
               <q-date
                 v-model="form.endDate"
+                :options="options"
                 :locale="myLocale"
                 mask="YYYY-MM-DD HH:mm"
               />
@@ -106,24 +107,35 @@
           style="margin:20px 0;"
           min-height="5rem"
         />
-        <van-uploader style="margin:20px 0;" v-model="form.images" multiple />
+        <MyUploader
+          style="margin:20px 0;"
+          ref="child"
+          :size="1024 * 1024 * 3"
+          :count="6"
+          @input="getImages"
+          @img="getImage"
+        />
       </div>
 
-      <q-btn
-        label="发布"
-        style="width:95%;"
-        size="md"
-        type="submit"
-        color="secondary"
-        rounded
-      />
+      <div class="q-ml-md">
+        <van-button
+          style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+          type="submit"
+          :loading="loading"
+          :disabled="loading"
+          loading-text="正在提交"
+          round
+          >修改</van-button
+        >
+      </div>
     </q-form>
   </div>
 </template>
 
 <script>
+import MyUploader from "../../components/Upload";
 import dayjs from "dayjs";
-import { Uploader as VanUploader, Toast } from "vant";
+import { Toast, Button as VanButton } from "vant";
 export default {
   name: "createTask",
   data: function() {
@@ -135,12 +147,7 @@ export default {
         startDate: "",
         endDate: "",
         taskDetail: "",
-        images: [
-          // { url: "https://cdn.quasar.dev/img/mountains.jpg" },
-          // { url: "https://cdn.quasar.dev/img/parallax1.jpg" },
-          // { url: "https://cdn.quasar.dev/img/parallax2.jpg" },
-          // { url: "https://cdn.quasar.dev/img/quasar.jpg" }
-        ]
+        images: []
       },
       myLocale: {
         /* starting with Sunday */
@@ -155,7 +162,8 @@ export default {
     };
   },
   components: {
-    VanUploader
+    MyUploader,
+    VanButton
   },
   methods: {
     options(date) {
@@ -167,6 +175,55 @@ export default {
           .format("YYYY/MM/DD")
       );
     },
+    getImage(data) {
+      this.form.images = data;
+    },
+    async getImages(data) {
+      try {
+        const res = await this.$axios.post(
+          "/v1/task",
+          {
+            taskName: this.form.taskName,
+            startDate: dayjs
+              .utc(this.form.startDate)
+              .subtract(8, "hour")
+              .format(),
+            endDate: dayjs
+              .utc(this.form.endDate)
+              .subtract(8, "hour")
+              .format(),
+            taskType: this.form.taskType,
+            taskScore: this.form.taskScore,
+            taskDetail: this.form.taskDetail,
+            taskAttachment: data
+          },
+          {
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          }
+        );
+        if (res.status !== 201) {
+          Toast({
+            message: "错误",
+            duration: 0
+          });
+          this.loading = false;
+        } else {
+          Toast.success("创建成功");
+          this.loading = false;
+          setTimeout(() => {
+            this.$router.push(`/notice/${res.headers.location}`);
+          }, 2000);
+        }
+      } catch {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+        this.loading = false;
+      }
+    },
     onSubmit() {
       this.$refs.form.validate().then(async success => {
         if (success) {
@@ -176,48 +233,52 @@ export default {
             });
           } else {
             this.loading = true;
-            try {
-              const res = await this.$axios.post(
-                "/v1/task",
-                {
-                  taskName: this.form.taskName,
-                  startDate: dayjs
-                    .utc(this.form.startDate)
-                    .subtract(8, "hour")
-                    .format(),
-                  endDate: dayjs
-                    .utc(this.form.endDate)
-                    .subtract(8, "hour")
-                    .format(),
-                  taskType: this.form.taskType,
-                  taskScore: this.form.taskScore,
-                  taskDetail: this.form.taskDetail
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json; charset=UTF-8"
+            if (this.form.images.length === 0) {
+              try {
+                const res = await this.$axios.post(
+                  "/v1/task",
+                  {
+                    taskName: this.form.taskName,
+                    startDate: dayjs
+                      .utc(this.form.startDate)
+                      .subtract(8, "hour")
+                      .format(),
+                    endDate: dayjs
+                      .utc(this.form.endDate)
+                      .subtract(8, "hour")
+                      .format(),
+                    taskType: this.form.taskType,
+                    taskScore: this.form.taskScore,
+                    taskDetail: this.form.taskDetail
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json; charset=UTF-8"
+                    }
                   }
+                );
+                if (res.status !== 201) {
+                  Toast({
+                    message: "错误",
+                    duration: 0
+                  });
+                  this.loading = false;
+                } else {
+                  Toast.success("创建成功");
+                  setTimeout(() => {
+                    this.$router.push(`/notice/${res.headers.location}`);
+                  }, 2000);
+                  this.loading = false;
                 }
-              );
-              if (res.status !== 201) {
+              } catch {
                 Toast({
-                  message: "错误",
+                  message: "请求出错,请检查网络或刷新重试！",
                   duration: 0
                 });
                 this.loading = false;
-              } else {
-                Toast.success("创建成功");
-                setTimeout(() => {
-                  this.$router.push(`/notice/${res.headers.location}`);
-                }, 2000);
-                this.loading = false;
               }
-            } catch {
-              Toast({
-                message: "请求出错,请检查网络或刷新重试！",
-                duration: 0
-              });
-              this.loading = false;
+            } else {
+              this.$refs.child.load();
             }
           }
         }

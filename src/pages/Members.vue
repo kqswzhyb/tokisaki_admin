@@ -6,6 +6,7 @@
     >
       <q-select
         outlined
+        v-if="!$store.state.user.info.user.userGroup"
         v-model="group"
         :options="options"
         :option-value="item => item.id"
@@ -75,7 +76,6 @@
           <div />
           <div />
         </div>
-        <p class="tip">加载中...</p>
       </div>
     </q-list>
     <div v-else class="flex-center" style="height:calc(100vh - 138px);">
@@ -241,22 +241,27 @@ export default {
   },
   created() {
     this.$store.commit("app/openLoading", true);
-    this.$axios
-      .get("/v1/usergroup/listall")
-      .then(async res => {
-        if (res.status === 200) {
-          this.options = [{ id: 0, groupName: "全部" }, ...res.data];
-          const result = await this.$axios.get("/v1/user");
-          this.data = result.data.filter(item => item.roles.length !== 3);
-          this.$store.commit("app/openLoading", false);
-        }
-      })
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
+    if (this.$store.state.user.info.user.userGroup) {
+      this.group = { id: this.$store.state.user.info.user.userGroup.id };
+      this.$store.commit("app/openLoading", false);
+    } else {
+      this.$axios
+        .get("/v1/usergroup/listall")
+        .then(async res => {
+          if (res.status === 200) {
+            this.options = [{ id: 0, groupName: "全部" }, ...res.data];
+            const result = await this.$axios.get("/v1/user");
+            this.data = result.data.filter(item => item.roles.length !== 3);
+            this.$store.commit("app/openLoading", false);
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
         });
-      });
+    }
   },
   methods: {
     openDialog(id, type) {

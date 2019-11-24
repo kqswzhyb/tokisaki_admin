@@ -22,7 +22,7 @@
         label="积分"
         :rules="[
           val =>
-            (val && val.length > 0 && val.indexOf('-') === -1) ||
+            (val && val.indexOf('-') === -1 && val.indexOf('.') === -1) ||
             '请输入正整数或零'
         ]"
       />
@@ -106,24 +106,35 @@
           style="margin:20px 0;"
           min-height="5rem"
         />
-        <van-uploader style="margin:20px 0;" v-model="form.images" multiple />
+        <MyUploader
+          style="margin:20px 0;"
+          ref="child"
+          :size="1024 * 1024 * 3"
+          :image="images"
+          :count="6"
+          @input="getImages"
+          @img="getImage"
+        />
       </div>
-
-      <q-btn
-        label="修改"
-        style="width:95%;"
-        size="md"
-        type="submit"
-        color="secondary"
-        rounded
-      />
+      <div class="q-ml-md">
+        <van-button
+          style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+          type="submit"
+          :loading="loading"
+          :disabled="loading"
+          loading-text="正在提交"
+          round
+          >修改</van-button
+        >
+      </div>
     </q-form>
   </div>
 </template>
 
 <script>
+import { Toast, Button as VanButton } from "vant";
+import MyUploader from "../../components/Upload";
 import dayjs from "dayjs";
-import { Uploader as VanUploader, Toast } from "vant";
 export default {
   name: "editTask",
   data: function() {
@@ -135,13 +146,10 @@ export default {
         startDate: "",
         endDate: "",
         taskDetail: "",
-        images: [
-          // { url: "https://cdn.quasar.dev/img/mountains.jpg" },
-          // { url: "https://cdn.quasar.dev/img/parallax1.jpg" },
-          // { url: "https://cdn.quasar.dev/img/parallax2.jpg" },
-          // { url: "https://cdn.quasar.dev/img/quasar.jpg" }
-        ]
+        images: []
       },
+      images: [],
+      loading: false,
       myLocale: {
         /* starting with Sunday */
         days: "周日_周一_周二_周三_周四_周五_周六".split("_"),
@@ -155,7 +163,8 @@ export default {
     };
   },
   components: {
-    VanUploader
+    MyUploader,
+    VanButton
   },
   created() {
     this.$store.commit("app/openLoading", true);
@@ -175,6 +184,23 @@ export default {
             .utc(res.data.endDate)
             .local()
             .format("YYYY-MM-DD HH:mm");
+          if (res.data.taskAttachment) {
+            res.data.taskAttachment.forEach(item => {
+              this.images.push(
+                Object.assign(
+                  {},
+                  {
+                    url: `${this.$baseURL}/${item.attachment.attachType
+                      .slice(0, 1)
+                      .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                      item.attachment.attachName
+                    }.${item.attachment.attachExtName}`,
+                    attachment: item.attachment
+                  }
+                )
+              );
+            });
+          }
           this.$store.commit("app/openLoading", false);
         }
       })
@@ -186,6 +212,55 @@ export default {
       });
   },
   methods: {
+    getImage(data) {
+      this.form.images = data;
+    },
+    async getImages(data) {
+      try {
+        const res = await this.$axios.put(
+          `/v1/task/${this.$route.params.id}`,
+          {
+            taskName: this.form.taskName,
+            startDate: dayjs
+              .utc(this.form.startDate)
+              .subtract(8, "hour")
+              .format(),
+            endDate: dayjs
+              .utc(this.form.endDate)
+              .subtract(8, "hour")
+              .format(),
+            taskType: this.form.taskType,
+            taskScore: this.form.taskScore,
+            taskDetail: this.form.taskDetail,
+            taskAttachment: data
+          },
+          {
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          }
+        );
+        if (res.status !== 200) {
+          Toast({
+            message: "错误",
+            duration: 0
+          });
+          this.loading = false;
+        } else {
+          Toast.success("修改成功");
+          this.loading = false;
+          setTimeout(() => {
+            this.$router.push(`/notice/${this.$route.params.id}`);
+          }, 2000);
+        }
+      } catch {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+        this.loading = false;
+      }
+    },
     options(date) {
       return (
         date >=
@@ -204,48 +279,52 @@ export default {
             });
           } else {
             this.loading = true;
-            try {
-              const res = await this.$axios.put(
-                `/v1/task/${this.$route.params.id}`,
-                {
-                  taskName: this.form.taskName,
-                  startDate: dayjs
-                    .utc(this.form.startDate)
-                    .subtract(8, "hour")
-                    .format(),
-                  endDate: dayjs
-                    .utc(this.form.endDate)
-                    .subtract(8, "hour")
-                    .format(),
-                  taskType: this.form.taskType,
-                  taskScore: this.form.taskScore,
-                  taskDetail: this.form.taskDetail
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json; charset=UTF-8"
+            if (this.form.images.length === 0) {
+              try {
+                const res = await this.$axios.put(
+                  `/v1/task/${this.$route.params.id}`,
+                  {
+                    taskName: this.form.taskName,
+                    startDate: dayjs
+                      .utc(this.form.startDate)
+                      .subtract(8, "hour")
+                      .format(),
+                    endDate: dayjs
+                      .utc(this.form.endDate)
+                      .subtract(8, "hour")
+                      .format(),
+                    taskType: this.form.taskType,
+                    taskScore: this.form.taskScore,
+                    taskDetail: this.form.taskDetail
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json; charset=UTF-8"
+                    }
                   }
+                );
+                if (res.status !== 200) {
+                  Toast({
+                    message: "错误",
+                    duration: 0
+                  });
+                  this.loading = false;
+                } else {
+                  Toast.success("修改成功");
+                  setTimeout(() => {
+                    this.$router.push(`/notice/${this.$route.params.id}`);
+                  }, 2000);
+                  this.loading = false;
                 }
-              );
-              if (res.status !== 200) {
+              } catch {
                 Toast({
-                  message: "错误",
+                  message: "请求出错,请检查网络或刷新重试！",
                   duration: 0
                 });
                 this.loading = false;
-              } else {
-                Toast.success("修改成功");
-                setTimeout(() => {
-                  this.$router.push(`/notice/${this.$route.params.id}`);
-                }, 2000);
-                this.loading = false;
               }
-            } catch {
-              Toast({
-                message: "请求出错,请检查网络或刷新重试！",
-                duration: 0
-              });
-              this.loading = false;
+            } else {
+              this.$refs.child.load();
             }
           }
         }

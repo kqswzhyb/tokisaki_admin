@@ -2,7 +2,7 @@
   "name": "tokisaki_admin",
   "version": "0.0.1",
   "description": " QQ group management system",
-  "productName": "Quasar App",
+  "productName": "群组管理系统",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
   "author": "kqswzhyb",

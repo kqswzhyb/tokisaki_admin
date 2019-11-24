@@ -5,9 +5,16 @@ const routes = [
   },
   {
     path: "/login",
-    component: () => import("pages/login/Login.vue"),
+    component: () => import("pages/account/Login.vue"),
     meta: {
       title: "登录"
+    }
+  },
+  {
+    path: "/register",
+    component: () => import("pages/account/Register.vue"),
+    meta: {
+      title: "注册"
     }
   },
   {

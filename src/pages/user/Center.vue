@@ -10,14 +10,18 @@
       </div>
       <div style="margin:10px 0 0 50px;">
         <div class="text-h5" style="margin-bottom:5px;">
-          <span>玄机妙算</span>
+          <span>{{ info.user.nickName }}</span>
         </div>
         <div class="text-weight-medium">
-          <span class="text-h6" style="color:#505050;">02001</span>
+          <span class="text-h6" style="color:#505050;">{{
+            info.user.userCode
+          }}</span>
         </div>
         <div class="flex-start">
           <q-icon name="star" size="sm" style="color:#ff9800;" />
-          <span style="color:#ff9800;" class="text-h6">1000</span>
+          <span style="color:#ff9800;" class="text-h6">{{
+            info.user.totalScore
+          }}</span>
         </div>
       </div>
     </div>
@@ -32,14 +36,17 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">QQ：</span>465604612
+              <span style="color:#999;">QQ：</span>{{ info.user.qqNo }}
             </p>
           </q-item-label>
         </q-item-section>
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">身份：</span>组长
+              <span style="color:#999;">身份：</span
+              >{{
+                roleList.find(item => item.value === info.roles.length).label
+              }}
             </p>
           </q-item-label>
         </q-item-section>
@@ -56,7 +63,10 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">状态：</span>正常
+              <span style="color:#999;">状态：</span
+              >{{
+                statuss.find(item => item.value === info.user.userStatus).label
+              }}
             </p>
           </q-item-label>
         </q-item-section>
@@ -90,71 +100,38 @@
       >
         任务情况
       </div>
-      <q-item style="margin-top:20px;">
-        <q-item-section top>
-          <q-item-label lines="1">
-            <p class="text-weight-medium">
-              <span style="color:#999;">最近提交：</span> 2019-10-21 22：01
-            </p>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-card>
-        <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
-          narrow-indicator
+      <div v-if="tasks.length !== 0">
+        <van-list
+          v-model="hasMore"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
         >
-          <q-tab name="short" label="短期任务" />
-          <q-tab name="long" label="长期任务" />
-        </q-tabs>
-
-        <q-separator />
-
-        <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="short">
-            <q-list padding class="rounded-borders" style="width:100%;">
-              <q-item clickable v-ripple @click="$router.push('/notice/2')">
-                <q-item-section>
-                  <q-item-label lines="1"
-                    ><span class="text-h6" style="color:#505050;"
-                      >世萌外交</span
-                    ></q-item-label
-                  >
-                </q-item-section>
-
-                <q-item-section side>
-                  <span class="text-weight-medium main">10</span>
-                </q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable v-ripple @click="$router.push('/notice/2')">
-                <q-item-section>
-                  <q-item-label lines="1"
-                    ><span class="text-h6" style="color:#505050;"
-                      >世萌外交2</span
-                    ></q-item-label
-                  >
-                </q-item-section>
-
-                <q-item-section side>
-                  <span class="text-weight-medium main">11</span>
-                </q-item-section>
-              </q-item>
-              <q-separator />
-            </q-list>
-          </q-tab-panel>
-
-          <q-tab-panel name="long">
-            <div class="text-h6">Alarms</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </q-tab-panel>
-        </q-tab-panels>
-      </q-card>
+          <q-card
+            class="my-card q-mb-md"
+            v-for="item in tasks.slice(0, number)"
+            :key="item.id"
+          >
+            <q-card-section
+              @click="$router.push(`/notice/${item.id}`)"
+              style="position:relative;"
+            >
+              <img
+                src="~assets/svgs/done.svg"
+                style="width:40px;height:40px;position:absolute;right:10px;top:10px;"
+              />
+              <div class="text-h6" style="color:#505050;">
+                {{ item.taskName }}
+              </div>
+              <div class="text-subtitle2" style="color:#808080;">
+                by <span class="main">{{ item.createUser.username }}</span>
+                {{ item.startDate | prettyDate }}
+              </div>
+            </q-card-section>
+          </q-card>
+        </van-list>
+      </div>
+      <div v-else class="q-pa-md text-center">还没有完成过任务....</div>
     </div>
     <q-dialog v-model="dialogShow">
       <q-card style="width: 300px">
@@ -176,7 +153,7 @@
             outlined
             type="password"
             onkeydown="if(event.keyCode==32) return false"
-            v-model="form.new"
+            v-model="form.password"
             label="新密码"
           />
           <q-input
@@ -199,18 +176,122 @@
 </template>
 
 <script>
+import { Toast, List as VanList } from "vant";
 export default {
   name: "center",
+  components: {
+    VanList
+  },
+  computed: {
+    info() {
+      return this.$store.state.user.info;
+    }
+  },
   data() {
     return {
       dialogShow: false,
       form: {
         origin: "",
-        new: "",
+        password: "",
         confirm: ""
       },
-      tab: "short"
+      roleList: [
+        {
+          value: 3,
+          label: "管理员"
+        },
+        {
+          value: 2,
+          label: "组长"
+        },
+        {
+          value: 1,
+          label: "组员"
+        }
+      ],
+      number: 10,
+      loading: false,
+      finished: false,
+      statuss: [
+        {
+          value: "Normal",
+          label: "正常"
+        },
+        {
+          value: "Frozen",
+          label: "冻结"
+        }
+      ],
+      tab: "short",
+      tasks: [],
+      hasMore: false
     };
+  },
+  created() {
+    this.$store.commit("app/openLoading", true);
+    this.$axios
+      .all([
+        this.$axios.get(`/v1/user?${this.$route.params.id}`),
+        this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`),
+        this.$axios.get(`/v1/task`)
+      ])
+      .then(
+        this.$axios.spread((res, res2, res3) => {
+          if (
+            res.status === 200 &&
+            res2.status === 200 &&
+            res3.status === 200
+          ) {
+            const taskIdList = Array.from(
+              new Set(res2.data.map(item => item.task.id))
+            );
+            this.tasks = taskIdList.map(item =>
+              res3.data.find(item2 => item2.id === item)
+            );
+            this.$store.commit("app/openLoading", false);
+          } else {
+            this.$store.commit("app/openLoading", false);
+            this.$router.push("/404");
+          }
+        })
+      )
+      .catch(() => {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+      });
+  },
+  methods: {
+    onLoad() {
+      setTimeout(() => {
+        if (this.number < this.tasks.length) {
+          this.number += 10;
+        }
+        this.hasMore = false;
+        if (this.number >= this.tasks.length) {
+          this.finished = true;
+        }
+      }, 1000);
+    },
+    onReset() {
+      this.$refs.form.clearValidate();
+      this.form = {
+        origin: "",
+        password: "",
+        confirm: ""
+      };
+    },
+    onSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.dialogFormVisible = false;
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    }
   }
 };
 </script>

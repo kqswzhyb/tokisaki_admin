@@ -29,3 +29,5 @@ axios.interceptors.request.use(config => {
 });
 axios.defaults.baseURL = "http://localhost:8090/api";
 Vue.prototype.$axios = axios;
+Vue.prototype.$baseURL =
+  "https://tokisaki-admin-1257494597.cos.ap-shanghai.myqcloud.com/";

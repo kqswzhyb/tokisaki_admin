@@ -79,3 +79,7 @@ $font:#505050;
 .van-overlay, .van-image-preview__overlay {
   z-index: 9999 !important;
 }
+
+.van-toast {
+  z-index:10000 !important;
+}

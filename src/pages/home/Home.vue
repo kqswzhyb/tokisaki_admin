@@ -83,6 +83,9 @@
             {{ longs[0].startDate | prettyDate }}
           </div>
         </q-card-section>
+        <q-card-section v-else>
+          <div class="q-pa-md text-center">暂无正在进行中的任务....</div>
+        </q-card-section>
       </q-card>
     </div>
     <div>

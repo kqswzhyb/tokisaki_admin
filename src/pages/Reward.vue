@@ -20,34 +20,39 @@
     </q-carousel>
     <div class="q-pa-md">
       <q-btn
+        v-if="$store.state.user.info.roles.length >= 3"
         color="secondary"
-        label="新建奖励"
+        label="新增奖励"
         class="q-mt-md q-mb-md"
-        @click="openForm('', '新建')"
+        @click="openForm('', '新增奖励')"
       />
       <q-table
         class="my-sticky-virtscroll-table"
         table-style="max-height: 400px"
         :pagination.sync="pagination"
         :rows-per-page-options="[0]"
-        row-key="score"
+        row-key="awardPoint"
         :data="rewards"
         :columns="columns"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td :props="props" key="score">
-              <span>{{ props.row.score }}</span>
+            <q-td :props="props" key="awardPoint">
+              <span>{{ props.row.awardPoint }}</span>
             </q-td>
-            <q-td :props="props" key="text">
-              <span>{{ props.row.text }}</span>
+            <q-td :props="props" key="awardTitle">
+              <span>{{ props.row.awardTitle }}</span>
             </q-td>
-            <q-td :props="props" key="operation">
+            <q-td
+              :props="props"
+              key="operation"
+              v-if="$store.state.user.info.roles.length >= 3"
+            >
               <q-icon
                 name="edit"
                 class="text-primary"
                 style="font-size: 20px;margin-right:15px;"
-                @click="openForm(props.row.id, '修改')"
+                @click="openForm(props.row.id, '修改奖励')"
               />
               <q-icon
                 name="delete"
@@ -66,7 +71,7 @@
       transition-hide="scale"
       @hide="hide"
     >
-      <q-card style="width: 300px">
+      <q-card style="min-width: 300px;width:90vw;">
         <q-card-section>
           <div class="text-h6">{{ title }}</div>
         </q-card-section>
@@ -78,7 +83,7 @@
               type="number"
               :rules="[
                 val =>
-                  (val && val.length > 0 && val.indexOf('-') === -1) ||
+                  (val && val.indexOf('-') === -1 && val.indexOf('.') === -1) ||
                   '请输入正整数或零'
               ]"
               label="积分节点"
@@ -95,16 +100,31 @@
           </q-card-section>
 
           <q-card-section>
-            <van-uploader style="margin:20px 0;" v-model="form.image" />
+            <MyUploader
+              ref="child"
+              type="ScoreAward"
+              :image="form.images"
+              :size="1024 * 1024 * 3"
+              :count="1"
+              @input="getImages"
+              @img="getImage"
+            />
           </q-card-section>
 
           <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn flat label="确定" type="submit" />
+            <van-button
+              style="width:80px;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+              type="submit"
+              :loading="loading"
+              :disabled="loading"
+              loading-text="正在提交"
+              >确定</van-button
+            >
           </q-card-actions>
         </q-form>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="dialogShow2" width="300px">
+    <q-dialog v-model="dialogShow2" width="300px" @hide="hide">
       <q-card style="width: 80vw;max-width:300px;">
         <q-card-section>
           <div class="text-h6">删除</div>
@@ -116,7 +136,12 @@
 
         <q-card-actions align="right">
           <q-btn flat label="取消" color="primary" v-close-popup />
-          <q-btn flat label="确定" color="primary" @click="deleteRow" />
+          <q-btn
+            flat
+            label="确定"
+            color="primary"
+            @click="deleteRow(selectedId)"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -124,16 +149,29 @@
 </template>
 
 <script>
-import { ImagePreview, Uploader as VanUploader, Toast } from "vant";
+import MyUploader from "../components/Upload";
+import { ImagePreview, Toast, Button as VanButton } from "vant";
 export default {
   components: {
-    VanUploader
+    VanButton,
+    MyUploader
   },
   computed: {
     images() {
       return this.rewards
-        .reduce((a, c) => a.concat(c.image[0] && [c.image[0].url]), [])
-        .filter(item => item != undefined);
+        .map(item => {
+          if (item.scoreAwardAttachment) {
+            return `${
+              this.$baseURL
+            }/${item.scoreAwardAttachment[0].attachment.attachType
+              .slice(0, 1)
+              .toLowerCase() +
+              item.scoreAwardAttachment[0].attachment.attachType.slice(1)}/${
+              item.scoreAwardAttachment[0].attachment.attachName
+            }.${item.scoreAwardAttachment[0].attachment.attachExtName}`;
+          }
+        })
+        .filter(item => item !== undefined);
     }
   },
   data() {
@@ -142,6 +180,7 @@ export default {
       pagination: {
         rowsPerPage: 0
       },
+      loading: false,
       dialogShow2: false,
       dialogShow: false,
       selectedId: "",
@@ -149,51 +188,22 @@ export default {
       form: {
         text: "",
         score: "",
-        image: []
+        images: []
       },
-      rewards: [
-        {
-          id: 1,
-          text: "bilibili大会员一个月",
-          score: 200,
-          image: [
-            {
-              key: "1221",
-              url: "https://cdn.quasar.dev/img/mountains.jpg"
-            }
-          ]
-        },
-        {
-          id: 2,
-          text: "时崎狂三挂画一副",
-          score: 500,
-          image: [
-            {
-              key: "1221",
-              url: "https://cdn.quasar.dev/img/mountains.jpg"
-            }
-          ]
-        },
-        {
-          id: 3,
-          text: "时崎狂三手办一个",
-          score: 9999,
-          image: []
-        }
-      ],
+      rewards: [],
 
       columns: [
         {
-          name: "score",
+          name: "awardPoint",
           label: "积分节点",
           align: "center",
-          field: row => row.score
+          field: row => row.awardPoint
         },
         {
-          name: "text",
+          name: "awardTitle",
           label: "奖励名称",
           align: "center",
-          field: row => row.text
+          field: row => row.awardTitle
         },
         {
           name: "operation",
@@ -203,7 +213,76 @@ export default {
       ]
     };
   },
+  created() {
+    this.getData();
+  },
   methods: {
+    getImage(data) {
+      this.form.images = data;
+    },
+    async getImages(data) {
+      const isNew = this.title === "新增奖励";
+      try {
+        const res = await this.$axios[isNew ? "post" : "put"](
+          isNew ? "/v1/scoreAward" : `/v1/scoreAward/${this.selectedId}`,
+          Object.assign(
+            {
+              awardPoint: this.form.score,
+              awardTitle: this.form.text,
+              scoreAwardAttachment: data
+            },
+            isNew ? {} : { id: this.selectedId }
+          ),
+          {
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          }
+        );
+        if (res.status !== (isNew ? 201 : 200)) {
+          Toast({
+            message: "错误",
+            duration: 0
+          });
+          this.loading = false;
+        } else {
+          Toast.success(isNew ? "创建成功" : "修改成功");
+          this.loading = false;
+          this.hide();
+          this.$refs.child.initData();
+          this.$nextTick(() => {
+            this.getData();
+          });
+        }
+      } catch {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+        this.loading = false;
+      }
+    },
+    getData() {
+      this.$store.commit("app/openLoading", true);
+      this.$axios
+        .get("/v1/scoreAward")
+        .then(res => {
+          if (res.status === 200) {
+            this.rewards = res.data.sort((a, c) => a.awardPoint - c.awardPoint);
+            this.$store.commit("app/openLoading", false);
+          }
+          if (res.status === 202) {
+            this.$store.commit("app/openLoading", false);
+            this.$router.push("/404");
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
+    },
     getImg(item, index) {
       ImagePreview({
         images: item,
@@ -212,15 +291,33 @@ export default {
         startPosition: index
       });
     },
-    deleteRow() {
-      this.dialogShow2 = false;
+    deleteRow(id) {
+      this.$axios
+        .delete(`/v1/scoreAward/${id}`)
+        .then(res => {
+          if (res.status === 200) {
+            const index = this.rewards.findIndex(item => item.id === id);
+            this.rewards.splice(index, 1);
+            Toast.success("删除成功");
+            this.dialogShow2 = false;
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
     },
     hide() {
       this.form = {
         text: "",
         score: "",
-        image: []
+        images: []
       };
+      this.selectedId = "";
+      this.dialogShow = false;
+      this.dialogShow2 = false;
     },
     open(id, name) {
       this.selectedId = id;
@@ -230,14 +327,68 @@ export default {
       this.title = title;
       if (id) {
         this.selectedId = id;
-        this.form = this.rewards.find(item => item.id === id);
+        const data = this.rewards.find(item => item.id === id);
+        this.form.text = data.awardTitle;
+        this.form.score = Number(data.awardPoint);
+        this.form.images = data.scoreAwardAttachment
+          ? data.scoreAwardAttachment.map(item => ({
+              url: `${this.$baseURL}/${item.attachment.attachType
+                .slice(0, 1)
+                .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                item.attachment.attachName
+              }.${item.attachment.attachExtName}`,
+              attachment: item.attachment
+            }))
+          : [];
       }
       this.dialogShow = true;
     },
     onSubmit() {
-      this.$refs.form.validate().then(success => {
+      this.$refs.form.validate().then(async success => {
         if (success) {
-          Toast("3232");
+          const isNew = this.title === "新增奖励";
+          this.loading = true;
+          if (this.form.images.length === 0) {
+            try {
+              const res = await this.$axios[isNew ? "post" : "put"](
+                isNew ? "/v1/scoreAward" : `/v1/scoreAward/${this.selectedId}`,
+                Object.assign(
+                  {
+                    awardPoint: this.form.score,
+                    awardTitle: this.form.text
+                  },
+                  isNew ? {} : { id: this.selectedId }
+                ),
+                {
+                  headers: {
+                    "Content-Type": "application/json; charset=UTF-8"
+                  }
+                }
+              );
+              if (res.status !== (isNew ? 201 : 200)) {
+                Toast({
+                  message: "错误",
+                  duration: 0
+                });
+                this.loading = false;
+              } else {
+                Toast.success(isNew ? "创建成功" : "修改成功");
+                this.loading = false;
+                this.hide();
+                this.$nextTick(() => {
+                  this.getData();
+                });
+              }
+            } catch {
+              Toast({
+                message: "请求出错,请检查网络或刷新重试！",
+                duration: 0
+              });
+              this.loading = false;
+            }
+          } else {
+            this.$refs.child.load();
+          }
         }
       });
     }

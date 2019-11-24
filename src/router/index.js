@@ -52,14 +52,14 @@ export default function({ store }) {
   //   mode: process.env.VUE_ROUTER_MODE,
   //   base: process.env.VUE_ROUTER_BASE
   // });
-  const whiteList = ["/login"]; // no redirect whitelist
+  const whiteList = ["/login", "/register"]; // no redirect whitelist
   router.beforeEach(async (to, from, next) => {
     NProgress.start();
     // determine whether the user has logged in
     const hasToken = getToken();
 
     if (hasToken) {
-      if (to.path === "/login") {
+      if (to.path === "/login" || to.path.includes("/register")) {
         // if is logged in, redirect to the home page
         next({ path: "/home" });
         NProgress.done();

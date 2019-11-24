@@ -32,6 +32,14 @@
         >
       </div>
     </q-form>
+    <div class="text-right q-mt-md">
+      <img
+        width="112"
+        style="cursor:pointer;"
+        src="~/assets/qq_login.png"
+        @click="goQQ"
+      />
+    </div>
   </div>
 </template>
 
@@ -88,6 +96,10 @@ export default {
         });
         this.loading = false;
       }
+    },
+    goQQ() {
+      window.location.href =
+        "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101825291&redirect_uri=https://tokisaki.cn/qqloin&state=test";
     }
   }
 };
