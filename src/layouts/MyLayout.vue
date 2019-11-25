@@ -43,14 +43,6 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item clickable to="/home">
-          <q-item-section avatar>
-            <q-icon name="home" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>首页</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-item clickable to="/rank/short">
           <q-item-section avatar>
             <q-icon name="calendar_today" />
@@ -192,6 +184,18 @@
 
             <q-item-section>
               个人中心
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/home">
+            <q-item-section avatar class="q-ml-sm">
+              <q-icon
+                name="img:statics/icons/home.svg"
+                style="font-size:20px;"
+              />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>返回首页</q-item-label>
             </q-item-section>
           </q-item>
 

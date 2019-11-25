@@ -35,12 +35,14 @@
         <div>
           <q-icon
             name="edit"
+            v-if="$store.state.user.info.roles.length >= 3"
             class="text-primary"
             style="font-size: 20px;margin-right:15px;"
             @click="$router.push(`/task/edit/${data.id}`)"
           />
           <q-icon
             name="cloud_download"
+            v-if="$store.state.user.info.roles.length >= 3"
             class="text-primary"
             style="font-size: 20px;"
           />

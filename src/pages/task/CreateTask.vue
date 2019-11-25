@@ -119,13 +119,13 @@
 
       <div class="q-ml-md">
         <van-button
-          style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+          style="width:100%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
           type="submit"
           :loading="loading"
           :disabled="loading"
           loading-text="正在提交"
           round
-          >修改</van-button
+          >发布</van-button
         >
       </div>
     </q-form>
@@ -140,6 +140,7 @@ export default {
   name: "createTask",
   data: function() {
     return {
+      loading: false,
       form: {
         taskName: "",
         taskType: "ShortTerm",

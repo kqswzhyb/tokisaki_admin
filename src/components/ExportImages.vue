@@ -1,14 +1,30 @@
 <template>
-  <van-button
-    style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
-    type="submit"
-    :loading="loading"
-    :disabled="loading"
-    loading-text="正在导出"
-    round
-    @click="handleBatchDownload(data)"
-    >导出图片</van-button
-  >
+  <div class="flex-start">
+    <van-button
+      style="width:35%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+      type="submit"
+      :loading="loading"
+      :disabled="loading"
+      loading-text="正在导出"
+      round
+      @click="handleBatchDownload(data)"
+      >导出图片</van-button
+    >
+    <div v-if="percentage != 0" style="margin-left:20px;">
+      <q-circular-progress
+        show-value
+        font-size="12px"
+        :value="percentage"
+        size="80px"
+        :thickness="0.1"
+        style="color:#e66457"
+        track-color="grey-3"
+        class="q-ma-md"
+      >
+        {{ percentage !== 100 ? `${parseInt(percentage)}%` : "导出完成" }}
+      </q-circular-progress>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -32,7 +48,9 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
+      current: {},
+      percentage: 0
     };
   },
   methods: {
@@ -49,7 +67,17 @@ export default {
             result = await axios({
               method: "get",
               url: item,
-              responseType: "arraybuffer"
+              responseType: "arraybuffer",
+              onDownloadProgress: progressEvent => {
+                this.current[progressEvent.total] = progressEvent.loaded;
+                this.percentage =
+                  (Object.values(this.current).reduce((a, c) => a + c, 0) /
+                    Object.keys(this.current).reduce(
+                      (a, c) => Number(a) + Number(c),
+                      0
+                    )) *
+                  100;
+              }
             });
           } catch (err) {
             this.$message.error("导出失败");
@@ -75,7 +103,17 @@ export default {
           result = await axios({
             method: "get",
             url: imgList[0],
-            responseType: "blob"
+            responseType: "blob",
+            onDownloadProgress: progressEvent => {
+              this.current[progressEvent.total] = progressEvent.loaded;
+              this.percentage =
+                (Object.values(this.current).reduce((a, c) => a + c, 0) /
+                  Object.keys(this.current).reduce(
+                    (a, c) => Number(a) + Number(c),
+                    0
+                  )) *
+                100;
+            }
           });
         } catch (err) {
           this.$message.error("导出失败");
