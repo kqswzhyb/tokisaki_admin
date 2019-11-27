@@ -10,17 +10,17 @@
       </div>
       <div style="margin:10px 0 0 50px;">
         <div class="text-h5" style="margin-bottom:5px;">
-          <span>{{ info.user.nickName }}</span>
+          <span>{{ info.nickName }}</span>
         </div>
         <div class="text-weight-medium">
           <span class="text-h6" style="color:#505050;">{{
-            info.user.userCode
+            info.userCode
           }}</span>
         </div>
         <div class="flex-start">
           <q-icon name="star" size="sm" style="color:#ff9800;" />
           <span style="color:#ff9800;" class="text-h6">{{
-            info.user.totalScore
+            info.totalScore
           }}</span>
         </div>
       </div>
@@ -36,7 +36,7 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">QQ：</span>{{ info.user.qqNo }}
+              <span style="color:#999;">QQ：</span>{{ info.qqNo }}
             </p>
           </q-item-label>
         </q-item-section>
@@ -64,9 +64,7 @@
           <q-item-label lines="1">
             <p class="text-weight-medium">
               <span style="color:#999;">状态：</span
-              >{{
-                statuss.find(item => item.value === info.user.userStatus).label
-              }}
+              >{{ statuss.find(item => item.value === info.userStatus).label }}
             </p>
           </q-item-label>
         </q-item-section>
@@ -87,7 +85,8 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">注册时间：</span> 2019-10-21 22：01
+              <span style="color:#999;">注册时间：</span>
+              {{ info.registerDate | prettyDate }}
             </p>
           </q-item-label>
         </q-item-section>
@@ -113,7 +112,9 @@
             :key="item.id"
           >
             <q-card-section
-              @click="$router.push(`/notice/${item.id}`)"
+              @click="
+                $router.push(`/user/commit/${item.id}?uid=${$route.params.id}`)
+              "
               style="position:relative;"
             >
               <img
@@ -182,11 +183,6 @@ export default {
   components: {
     VanList
   },
-  computed: {
-    info() {
-      return this.$store.state.user.info;
-    }
-  },
   data() {
     return {
       dialogShow: false,
@@ -224,14 +220,15 @@ export default {
       ],
       tab: "short",
       tasks: [],
-      hasMore: false
+      hasMore: false,
+      info: {}
     };
   },
   created() {
     this.$store.commit("app/openLoading", true);
     this.$axios
       .all([
-        this.$axios.get(`/v1/user?${this.$route.params.id}`),
+        this.$axios.get(`/v1/user/${this.$route.params.id}`),
         this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`),
         this.$axios.get(`/v1/task`)
       ])
@@ -245,6 +242,7 @@ export default {
             const taskIdList = Array.from(
               new Set(res2.data.map(item => item.task.id))
             );
+            this.info = res.data;
             this.tasks = taskIdList.map(item =>
               res3.data.find(item2 => item2.id === item)
             );

@@ -6,6 +6,7 @@
       :max-count="count"
       :before-read="beforeRead"
       :max-size="size"
+      :disabled="disabled"
     />
     <div v-if="percentage != 0" style="margin-left:20px;">
       <q-circular-progress
@@ -53,7 +54,8 @@ export default {
       current: {},
       percentage: 0,
       images: this.image,
-      urls: []
+      urls: [],
+      disabled: false
     };
   },
   watch: {
@@ -61,7 +63,8 @@ export default {
       this.images = val;
     },
     urls: function(val) {
-      if (val.length === this.images.length) {
+      if (val.length !== 0 && val.length === this.images.length) {
+        this.disabled = false;
         this.$emit("input", val);
       }
     },
@@ -75,8 +78,10 @@ export default {
       this.current = {};
       this.images = [];
       this.urls = [];
+      this.disabled = false;
     },
     async load() {
+      this.disabled = true;
       this.urls = [...this.images.filter(item => item.url)];
       const uploadList = this.images.filter(item => item.file);
       uploadList.forEach(async item => {

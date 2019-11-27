@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <div style="margin-bottom:20px;">
       当前用户：<span class="text-h6" style="color:#505050;">{{
-        $store.state.user.info.user.nickName
+        nickName
       }}</span>
     </div>
     <div style="margin-bottom:20px;">
@@ -129,7 +129,8 @@ export default {
       loading: false,
       number: 10,
       finished: false,
-      hasMore: false
+      hasMore: false,
+      nickName: ""
     };
   },
   created() {
@@ -141,12 +142,14 @@ export default {
             this.$route.params.id
           }/`
         ),
-        this.$axios.get(`/v1/task/${this.$route.params.id}`)
+        this.$axios.get(`/v1/task/${this.$route.params.id}`),
+        this.$axios.get(`/v1/user/${this.$route.query.uid}`)
       ])
       .then(
-        this.$axios.spread((res, res2) => {
-          if (res.status === 200 && res2.status === 200) {
+        this.$axios.spread((res, res2, res3) => {
+          if (res.status === 200 && res2.status === 200 && res3.status == 200) {
             this.data = res.data;
+            this.nickName = res3.data.nickName;
             this.taskName = res2.data.taskName;
             this.data = this.data.map(item => {
               return Object.assign({}, item, {
@@ -165,8 +168,7 @@ export default {
               });
             });
             this.$store.commit("app/openLoading", false);
-          }
-          if (res.status === 202) {
+          } else {
             this.$store.commit("app/openLoading", false);
             this.$router.push("/404");
           }
