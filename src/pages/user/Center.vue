@@ -68,7 +68,10 @@
             </p>
           </q-item-label>
         </q-item-section>
-        <q-item-section top>
+        <q-item-section
+          top
+          v-if="$store.state.user.info.user.id === $route.params.id"
+        >
           <q-item-label lines="1">
             <p class="text-weight-medium">
               <span style="color:#999;">密码：</span>修改密码 >><q-icon
@@ -224,41 +227,13 @@ export default {
       info: {}
     };
   },
+  watch: {
+    "$route.params.id": function() {
+      this.getData();
+    }
+  },
   created() {
-    this.$store.commit("app/openLoading", true);
-    this.$axios
-      .all([
-        this.$axios.get(`/v1/user/${this.$route.params.id}`),
-        this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`),
-        this.$axios.get(`/v1/task`)
-      ])
-      .then(
-        this.$axios.spread((res, res2, res3) => {
-          if (
-            res.status === 200 &&
-            res2.status === 200 &&
-            res3.status === 200
-          ) {
-            const taskIdList = Array.from(
-              new Set(res2.data.map(item => item.task.id))
-            );
-            this.info = res.data;
-            this.tasks = taskIdList.map(item =>
-              res3.data.find(item2 => item2.id === item)
-            );
-            this.$store.commit("app/openLoading", false);
-          } else {
-            this.$store.commit("app/openLoading", false);
-            this.$router.push("/404");
-          }
-        })
-      )
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      });
+    this.getData();
   },
   methods: {
     onLoad() {
@@ -271,6 +246,42 @@ export default {
           this.finished = true;
         }
       }, 1000);
+    },
+    getData() {
+      this.$store.commit("app/openLoading", true);
+      this.$axios
+        .all([
+          this.$axios.get(`/v1/user/${this.$route.params.id}`),
+          this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`),
+          this.$axios.get(`/v1/task`)
+        ])
+        .then(
+          this.$axios.spread((res, res2, res3) => {
+            if (
+              res.status === 200 &&
+              res2.status === 200 &&
+              res3.status === 200
+            ) {
+              const taskIdList = Array.from(
+                new Set(res2.data.map(item => item.task.id))
+              );
+              this.info = res.data;
+              this.tasks = taskIdList.map(item =>
+                res3.data.find(item2 => item2.id === item)
+              );
+              this.$store.commit("app/openLoading", false);
+            } else {
+              this.$store.commit("app/openLoading", false);
+              this.$router.push("/404");
+            }
+          })
+        )
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
     },
     onReset() {
       this.$refs.form.clearValidate();

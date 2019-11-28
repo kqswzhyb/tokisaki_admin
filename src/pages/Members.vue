@@ -6,7 +6,7 @@
     >
       <q-select
         outlined
-        v-if="!$store.state.user.info.user.userGroup"
+        v-if="$store.state.user.info.roles.length >= 3"
         v-model="group"
         :options="options"
         :option-value="item => item.id"
@@ -56,7 +56,9 @@
               }}</span>
               <span
                 style="color:#000;"
-                @click.stop="openDialog2(item.id, item.userStatus)"
+                @click.stop="
+                  openDialog2(item.id, item.userStatus, item.roles.length)
+                "
                 >{{
                   options2.find(o => o.value === item.userStatus).label
                 }}</span
@@ -265,14 +267,18 @@ export default {
   },
   methods: {
     openDialog(id, type) {
-      this.selectedId = id;
-      this.role = type;
-      this.dialogShow = true;
+      if (this.$store.state.user.info.roles.length > type) {
+        this.selectedId = id;
+        this.role = type;
+        this.dialogShow = true;
+      }
     },
-    openDialog2(id, type) {
-      this.selectedId = id;
-      this.auth = type;
-      this.dialogShow2 = true;
+    openDialog2(id, type, role) {
+      if (this.$store.state.user.info.roles.length > role) {
+        this.selectedId = id;
+        this.auth = type;
+        this.dialogShow2 = true;
+      }
     }
   }
 };

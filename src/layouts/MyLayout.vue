@@ -125,7 +125,7 @@
       <q-scroll-area
         style="height: calc(100% - 131px); margin-top: 131px; border-right: 1px solid #ddd"
       >
-        <q-list padding>
+        <q-list>
           <q-item clickable v-ripple to="/user/messages/2">
             <q-item-section avatar class="q-ml-sm">
               <q-icon

@@ -130,7 +130,8 @@ export default {
       number: 10,
       finished: false,
       hasMore: false,
-      nickName: ""
+      nickName: "",
+      role: 0
     };
   },
   created() {
@@ -151,6 +152,7 @@ export default {
             this.data = res.data;
             this.nickName = res3.data.nickName;
             this.taskName = res2.data.taskName;
+            this.role = res3.data.roles.length;
             this.data = this.data.map(item => {
               return Object.assign({}, item, {
                 images:
@@ -229,7 +231,7 @@ export default {
       this.prompt = true;
     },
     onSubmit() {
-      if (this.$store.state.user.info.roles.length >= 2) {
+      if (this.$store.state.user.info.roles.length > this.role) {
         this.$refs.form.validate().then(async success => {
           if (success) {
             this.loading = true;
