@@ -77,7 +77,7 @@
     </div>
     <q-card-actions align="right" class="q-mb-lg">
       <q-btn
-        label="我的提交"
+        label="提交记录"
         color="warning"
         glossy
         v-close-popup

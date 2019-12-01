@@ -137,57 +137,84 @@
       </div>
       <div v-else class="q-pa-md text-center">还没有完成过任务....</div>
     </div>
-    <q-dialog v-model="dialogShow">
+    <q-dialog v-model="dialogShow" @hide="hide">
       <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6">修改密码</div>
         </q-card-section>
+        <q-form @submit="onSubmit" ref="form">
+          <q-card-section>
+            <q-input
+              style="margin-bottom:15px;"
+              outlined
+              type="password"
+              onkeydown="if(event.keyCode==32) return false"
+              v-model="form.origin"
+              label="原密码"
+              :rules="[
+                val =>
+                  (val &&
+                    val.length >= 6 &&
+                    /^[\u4e00-\u9fa5A-Za-z0-9]+$/gi.test(val)) ||
+                  '请输入至少6位字母和数字'
+              ]"
+            />
+            <q-input
+              style="margin-bottom:15px;"
+              outlined
+              type="password"
+              onkeydown="if(event.keyCode==32) return false"
+              v-model="form.password"
+              label="新密码"
+              :rules="[
+                val =>
+                  (val &&
+                    val.length >= 6 &&
+                    /^[\u4e00-\u9fa5A-Za-z0-9]+$/gi.test(val)) ||
+                  '请输入至少6位字母和数字'
+              ]"
+            />
+            <q-input
+              style="margin-bottom:15px;"
+              outlined
+              type="password"
+              onkeydown="if(event.keyCode==32) return false"
+              v-model="form.confirm"
+              label="确认密码"
+              :rules="[
+                val =>
+                  (val && val === form.password) || '确认密码必须和密码一样'
+              ]"
+            />
+          </q-card-section>
 
-        <q-card-section>
-          <q-input
-            style="margin-bottom:15px;"
-            outlined
-            type="password"
-            onkeydown="if(event.keyCode==32) return false"
-            v-model="form.origin"
-            label="原密码"
-          />
-          <q-input
-            style="margin-bottom:15px;"
-            outlined
-            type="password"
-            onkeydown="if(event.keyCode==32) return false"
-            v-model="form.password"
-            label="新密码"
-          />
-          <q-input
-            style="margin-bottom:15px;"
-            outlined
-            type="password"
-            onkeydown="if(event.keyCode==32) return false"
-            v-model="form.confirm"
-            label="确认密码"
-          />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="取消" color="primary" v-close-popup />
-          <q-btn flat label="确定" color="primary" v-close-popup />
-        </q-card-actions>
+          <q-card-actions align="right">
+            <van-button
+              style="width:80px;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
+              type="submit"
+              :loading="submitLoading"
+              :disabled="submitLoading"
+              loading-text="正在提交"
+              >确定</van-button
+            >
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script>
-import { Toast, List as VanList } from "vant";
+import { Toast, List as VanList, Button as VanButton } from "vant";
 export default {
   name: "center",
   components: {
-    VanList
+    VanList,
+    VanButton
   },
   data() {
     return {
+      submitLoading: false,
       dialogShow: false,
       form: {
         origin: "",
@@ -283,21 +310,47 @@ export default {
           });
         });
     },
-    onReset() {
-      this.$refs.form.clearValidate();
+    hide() {
       this.form = {
         origin: "",
         password: "",
         confirm: ""
       };
+      this.dialogShow = false;
     },
-    onSubmit(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.dialogFormVisible = false;
-        } else {
-          console.log("error submit!!");
-          return false;
+    onSubmit() {
+      this.$refs.form.validate().then(async success => {
+        if (success) {
+          this.submitLoading = true;
+          this.$axios
+            .post(
+              "/v1/user/changePassword/",
+              {
+                oldPassword: this.form.origin,
+                newPassword: this.form.password
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json; charset=UTF-8"
+                }
+              }
+            )
+            .then(res => {
+              if (res.status === 200) {
+                this.submitLoading = false;
+                Toast.success("修改成功");
+                this.dialogShow = false;
+              } else {
+                this.submitLoading = false;
+                Toast("原密码错误");
+              }
+            })
+            .catch(() => {
+              Toast({
+                message: "请求出错,请检查网络或刷新重试！",
+                duration: 0
+              });
+            });
         }
       });
     }

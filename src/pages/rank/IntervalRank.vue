@@ -105,9 +105,11 @@
                 </q-item-section>
 
                 <q-item-section side>
-                  <span class="text-weight-medium main">{{
-                    item.totalScore
-                  }}</span>
+                  <span
+                    class="text-weight-medium main"
+                    v-if="$store.state.user.info.roles.length >= 2"
+                    >{{ item.totalScore }}</span
+                  >
                 </q-item-section>
               </q-item>
             </van-list>
@@ -162,9 +164,11 @@
                 </q-item-section>
 
                 <q-item-section side>
-                  <span class="text-weight-medium main">{{
-                    item.totalScore
-                  }}</span>
+                  <span
+                    class="text-weight-medium main"
+                    v-if="$store.state.user.info.roles.length >= 2"
+                    >{{ item.totalScore }}</span
+                  >
                 </q-item-section>
               </q-item>
             </van-list>

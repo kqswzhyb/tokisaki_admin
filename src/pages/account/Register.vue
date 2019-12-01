@@ -7,13 +7,9 @@
       <q-input
         class="main"
         v-model="form.username"
-        label="用户名"
+        label="QQ号（用作帐号）"
         :rules="[
-          val =>
-            (val &&
-              val.length >= 6 &&
-              /^[\u4e00-\u9fa5A-Za-z0-9]+$/gi.test(val)) ||
-            '请输入至少6位汉字和英文字母和数字'
+          val => (val && /^[0-9]+$/gi.test(val)) || '请输入你在群中的QQ号码'
         ]"
       >
         <template v-slot:prepend>
@@ -28,9 +24,9 @@
         :rules="[
           val =>
             (val &&
-              val.length === 6 &&
+              val.length >= 6 &&
               /^[\u4e00-\u9fa5A-Za-z0-9]+$/gi.test(val)) ||
-            '请输入6位字母和数字'
+            '请输入至少6位字母和数字'
         ]"
       >
         <template v-slot:prepend>
@@ -64,92 +60,120 @@
           <q-icon name="img:statics/icons/invite.svg" style="font-size:24px;" />
         </template>
       </q-input>
-      <q-input
-        class="main"
-        v-model="form.qqNo"
-        label="QQ号码"
-        :rules="[
-          val => (val && /^[0-9]+$/gi.test(val)) || '请输入你在群中的QQ号码'
-        ]"
-      >
-        <template v-slot:prepend>
-          <q-icon name="img:statics/icons/qq.svg" style="font-size:24px;" />
-        </template>
-      </q-input>
       <div style="width:100%;">
         <van-button
-          :loading="loading"
-          :disabled="loading"
-          loading-text="正在注册..."
+          :disabled="disabled"
           style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
           type="submit"
           >注册</van-button
         >
       </div>
     </q-form>
+    <q-dialog v-model="visible" width="300px" @hide="hide">
+      <q-card style="width: 80vw;max-width:300px;">
+        <q-card-section>
+          <div class="text-h6">提示</div>
+        </q-card-section>
+
+        <q-card-section v-if="groupName">
+          注册成功后将自动加入{{ groupName }},您确定吗？
+        </q-card-section>
+
+        <q-card-section v-else>
+          邀请码不存在
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="取消" color="primary" v-close-popup />
+          <q-btn flat label="确定" color="primary" @click="register" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 import { Button as VanButton, Toast } from "vant";
-import { setToken } from "../../utils/auth";
+// import { setToken } from "../../utils/auth";
 export default {
   components: {
     VanButton
   },
   data() {
     return {
+      disabled: false,
       loading: false,
       form: {
+        id: "",
         username: "",
         password: "",
         confirmPassword: "",
-        inviteCode: "",
-        qqNo: ""
-      }
+        inviteCode: ""
+      },
+      groupName: "",
+      visible: false
     };
   },
   methods: {
     async onSubmit() {
       this.$refs.form.validate().then(async success => {
         if (success) {
-          this.loading = true;
-          try {
-            const res = await this.$axios.post(
-              "/auth/signin",
-              {
-                username: this.form.username,
-                password: this.form.password
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json; charset=UTF-8"
+          if (this.form.id) {
+            this.disabled = true;
+            this.$axios
+              .get(`/auth/groupcode?code=${this.form.inviteCode}`)
+              .then(res => {
+                if (res.status === 200) {
+                  this.groupName = res.data.groupname;
+                  this.visible = true;
+                } else {
+                  Toast("此邀请码不存在");
+                  this.groupName = "";
+                  this.visible = false;
+                  this.disabled = false;
                 }
-              }
-            );
-            if (res.status !== 200) {
-              Toast({
-                message: "帐号或密码错误"
               });
-              this.loading = false;
-            } else {
-              this.$store.commit("user/SET_TOKEN", res.data.token);
-              setToken(res.data.token);
-              this.$router.push({ path: "/home" });
-              this.loading = false;
-            }
-          } catch {
-            Toast({
-              message: "请求出错,请检查网络或刷新重试！"
-            });
-            this.loading = false;
+          } else {
+            Toast("请先通过QQ授权再注册");
           }
         }
       });
     },
-    goQQ() {
-      window.location.href =
-        "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101825291&redirect_uri=https://tokisaki.cn/qqloin&state=test";
+    hide() {
+      this.disabled = false;
+    },
+    async register() {
+      this.loading = true;
+      try {
+        const res = await this.$axios.post(
+          "/auth/qqbind",
+          {
+            username: this.form.username,
+            password: this.form.password,
+            groupInvite: this.form.inviteCode,
+            id: this.form.id
+          },
+          {
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8"
+            }
+          }
+        );
+        console.log(res.data);
+        // if (res.status !== 200) {
+        //   this.$message.error('帐号或密码错误')
+        //   this.loading = false
+        // } else {
+        //   this.$store.commit('user/SET_TOKEN', res.data.token)
+        //   setToken(res.data.token)
+        //   this.$router.push({ path: this.redirect || '/' })
+        //   this.loading = false
+        // }
+      } catch {
+        Toast({
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
+        });
+      }
     }
   }
 };

@@ -12,6 +12,7 @@
       style="margin:20px 0;"
       ref="child"
       :size="1024 * 1024 * 3"
+      type="UserTask"
       :count="6"
       @input="getImages"
       @img="getImage"
@@ -74,6 +75,7 @@ export default {
           this.loading = false;
         } else {
           Toast.success("提交成功");
+          this.$store.dispatch("user/getInfo");
           this.loading = false;
           setTimeout(() => {
             this.$router.push(
