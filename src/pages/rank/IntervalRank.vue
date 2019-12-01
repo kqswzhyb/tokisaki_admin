@@ -319,14 +319,18 @@ export default {
               start: res.data.weekStart,
               end: res.data.weekEnd
             };
-            this.weekRankAll = res.data.weekList;
+            if (res.data.weekList) {
+              this.weekRankAll = res.data.weekList;
+            }
             this.monthTime = {
               start: res.data.monthStart,
               end: res.data.monthEnd
             };
             this.all = JSON.parse(JSON.stringify(this.weekRankAll));
             this.showTime = Object.assign({}, this.weekTime);
-            this.monthRankAll = res.data.monthList;
+            if (res.data.monthList) {
+              this.monthRankAll = res.data.monthList;
+            }
             this.totalRankAll = res.data.allList;
             if (res2.data.groupWeekList) {
               this.oneWeek = res2.data.groupWeekList;

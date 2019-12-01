@@ -35,6 +35,19 @@
         behavior="menu"
       />
     </div>
+    <div class="q-mb-md">
+      <q-select
+        outlined
+        v-if="$store.state.user.info.roles.length >= 3"
+        v-model="group"
+        :options="groups"
+        :option-value="item => item.id"
+        :option-label="item => item.groupName"
+        label="小组组名"
+        behavior="menu"
+        style="width:40vw;min-width:150px;"
+      />
+    </div>
     <div style="margin-bottom:20px;">
       <div class="text-weight-medium" style="margin-bottom:5px;">
         本次任务起始时间: {{ value.startDate | prettyDate }}
@@ -63,121 +76,116 @@
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="one">
           <q-list padding class="rounded-borders" style="width:100%;">
-            <q-item clickable v-ripple>
-              <q-item-section avatar top style="position:relative;">
-                <q-avatar>
-                  <img
-                    src="https://cdn.quasar.dev/img/avatar2.jpg"
-                    style="width:40px;height:40px;"
-                  />
-                </q-avatar>
-                <img
-                  src="~assets/svgs/guanjun.svg"
-                  style="position:absolute;left:-10px;;top:-10px;width:25px;height:25px;"
-                />
-              </q-item-section>
+            <van-list
+              v-model="oneLoading"
+              :finished="oneFinished"
+              finished-text="已经到底了..."
+              loading-text=""
+              :offset="30"
+              @load="onLoad('oneNumber', 'oneLoading', 'oneFinished', 'one')"
+            >
+              <q-item
+                clickable
+                v-ripple
+                v-for="(item, index) in one.slice(0, oneNumber)"
+                :key="index"
+                @click="goCenter(item.id)"
+                class="flex-center"
+              >
+                <div
+                  class="rank flex-center"
+                  :style="{
+                    backgroundColor:
+                      index === 0
+                        ? '#ff9800'
+                        : index === 1
+                        ? '#ccc'
+                        : index === 2
+                        ? '#b87333'
+                        : '#3c9cfe'
+                  }"
+                >
+                  <span style="color:#fff;font-size:12px">{{ index + 1 }}</span>
+                </div>
+                <q-item-section avatar top>
+                  <q-avatar>
+                    <img
+                      src="https://cdn.quasar.dev/img/avatar2.jpg"
+                      style="width:40px;height:40px;"
+                    />
+                  </q-avatar>
+                </q-item-section>
 
-              <q-item-section>
-                <q-item-label lines="1">name</q-item-label>
-                <q-item-label caption>02001</q-item-label>
-              </q-item-section>
+                <q-item-section>
+                  <q-item-label lines="1">{{ item.nickName }}</q-item-label>
+                  <q-item-label caption>{{ item.userCode }}</q-item-label>
+                </q-item-section>
 
-              <q-item-section side>
-                <span class="text-weight-medium main">10</span>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar top style="position:relative;">
-                <q-avatar>
-                  <img
-                    src="https://cdn.quasar.dev/img/avatar2.jpg"
-                    style="width:40px;height:40px;"
-                  />
-                </q-avatar>
-                <img
-                  src="~assets/svgs/yajun.svg"
-                  style="position:absolute;left:-10px;;top:-10px;width:25px;height:25px;"
-                />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label lines="1">name2</q-item-label>
-                <q-item-label caption>02002</q-item-label>
-              </q-item-section>
-
-              <q-item-section side>
-                <span class="text-weight-medium main">9</span>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar top style="position:relative;">
-                <q-avatar>
-                  <img
-                    src="https://cdn.quasar.dev/img/avatar2.jpg"
-                    style="width:40px;height:40px;"
-                  />
-                </q-avatar>
-                <img
-                  src="~assets/svgs/jijun.svg"
-                  style="position:absolute;left:-10px;;top:-10px;width:25px;height:25px;"
-                />
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label lines="1">name3</q-item-label>
-                <q-item-label caption>02003</q-item-label>
-              </q-item-section>
-
-              <q-item-section side>
-                <span class="text-weight-medium main">7</span>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section avatar top style="position:relative;">
-                <q-avatar>
-                  <img
-                    src="https://cdn.quasar.dev/img/avatar2.jpg"
-                    style="width:40px;height:40px;"
-                  />
-                </q-avatar>
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label lines="1">name4</q-item-label>
-                <q-item-label caption>02004</q-item-label>
-              </q-item-section>
-
-              <q-item-section side>
-                <span class="text-weight-medium main">6</span>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section avatar top style="position:relative;">
-                <q-avatar>
-                  <img
-                    src="https://cdn.quasar.dev/img/avatar2.jpg"
-                    style="width:40px;height:40px;"
-                  />
-                </q-avatar>
-              </q-item-section>
-
-              <q-item-section>
-                <q-item-label lines="1">name5</q-item-label>
-                <q-item-label caption>02005</q-item-label>
-              </q-item-section>
-
-              <q-item-section side>
-                <span class="text-weight-medium main">6</span>
-              </q-item-section>
-            </q-item>
+                <q-item-section side>
+                  <span class="text-weight-medium main">{{
+                    item.totalScore
+                  }}</span>
+                </q-item-section>
+              </q-item>
+            </van-list>
           </q-list>
         </q-tab-panel>
 
         <q-tab-panel name="all">
-          <div class="text-h6">Alarms</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <q-list padding class="rounded-borders" style="width:100%;">
+            <van-list
+              v-model="allLoading"
+              :finished="allFinished"
+              finished-text="已经到底了..."
+              loading-text=""
+              :offset="30"
+              @load="onLoad('allNumber', 'allLoading', 'allFinished', 'all')"
+            >
+              <q-item
+                clickable
+                v-ripple
+                v-for="(item, index) in all.slice(0, allNumber)"
+                :key="index"
+                @click="goCenter(item.id)"
+                class="flex-center"
+              >
+                <div
+                  class="rank flex-center"
+                  :style="{
+                    backgroundColor:
+                      index === 0
+                        ? '#ff9800'
+                        : index === 1
+                        ? '#ccc'
+                        : index === 2
+                        ? '#b87333'
+                        : '#3c9cfe'
+                  }"
+                >
+                  <span style="color:#fff;font-size:12px">{{ index + 1 }}</span>
+                </div>
+                <q-item-section avatar top>
+                  <q-avatar>
+                    <img
+                      src="https://cdn.quasar.dev/img/avatar2.jpg"
+                      style="width:40px;height:40px;"
+                    />
+                  </q-avatar>
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label lines="1">{{ item.nickName }}</q-item-label>
+                  <q-item-label caption>{{ item.userCode }}</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <span class="text-weight-medium main">{{
+                    item.totalScore
+                  }}</span>
+                </q-item-section>
+              </q-item>
+            </van-list>
+          </q-list>
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -185,10 +193,13 @@
 </template>
 
 <script>
-import { Toast } from "vant";
+import { Toast, List as VanList } from "vant";
 import dayjs from "dayjs";
 export default {
   name: "shortRank",
+  components: {
+    VanList
+  },
   data() {
     return {
       tasks: {},
@@ -197,6 +208,7 @@ export default {
       value: {},
       options: [],
       data: [],
+      id: "",
       myLocale: {
         /* starting with Sunday */
         days: "周日_周一_周二_周三_周四_周五_周六".split("_"),
@@ -207,7 +219,18 @@ export default {
         ),
         firstDayOfWeek: 1
       },
-      tab: "one"
+      tab: "all",
+      all: [],
+      one: [],
+      allNumber: 20,
+      allLoading: false,
+      allFinished: false,
+      oneNumber: 20,
+      oneLoading: false,
+      oneFinished: false,
+
+      group: {},
+      groups: []
     };
   },
   watch: {
@@ -216,89 +239,184 @@ export default {
         if (this.dates.find(item => item === val)) {
           this.options = this.tasks[val];
           this.value = this.tasks[val][0];
+          this.id = this.value.id;
         } else {
           this.options = [];
-          this.value = "";
+          this.value = {};
+        }
+      }
+    },
+    id: async function(val) {
+      if (Object.keys(this.group).length !== 0 && val) {
+        this.$store.commit("app/openLoading", true);
+        this.initData();
+        try {
+          const res2 = await this.$axios.get(
+            `/v1/rank/groupRankforTask/${val}`
+          );
+          const res3 = await this.$axios.get(
+            `/v1/rank/groupRankforTask/${val}/${this.group.id}`
+          );
+          if (res2.data.allList) {
+            this.all = res2.data.allList;
+          }
+          if (res3.data.groupList) {
+            this.one = res3.data.groupList;
+          }
+          this.$store.commit("app/openLoading", false);
+        } catch (err) {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        }
+      }
+    },
+    group: async function(val) {
+      if (Object.keys(val).length !== 0 && this.id) {
+        this.$store.commit("app/openLoading", true);
+        this.initGroup();
+        try {
+          const res = await this.$axios.get(
+            `/v1/rank/groupRankforTask/${this.id}/${val.id}`
+          );
+          if (res.data.groupList) {
+            this.one = res.data.groupList;
+          }
+          this.$store.commit("app/openLoading", false);
+        } catch (err) {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
         }
       }
     }
   },
-  created() {
+  async created() {
     this.$store.commit("app/openLoading", true);
-    this.$axios
-      .get("/v1/task/search/?taskType=ShortTerm")
-      .then(res => {
-        if (res.status === 200) {
-          this.data = res.data;
-          this.dates = res.data.map(item =>
-            dayjs
-              .utc(item.startDate)
-              .local()
-              .format("YYYY/MM/DD")
-          );
-          res.data.forEach(item => {
-            if (
-              !this.tasks[
-                dayjs
-                  .utc(item.startDate)
-                  .local()
-                  .format("YYYY/MM/DD")
-              ]
-            ) {
-              this.tasks[
-                dayjs
-                  .utc(item.startDate)
-                  .local()
-                  .format("YYYY/MM/DD")
-              ] = [];
-            }
+    try {
+      const result = await this.$axios.get("/v1/usergroup/listall");
+      if (result.status === 200) {
+        this.groups = result.data;
+      } else {
+        this.$router.push("/404");
+      }
+      if (this.$store.state.user.info.user.userGroup) {
+        this.group = this.$store.state.user.info.user.userGroup;
+      } else {
+        this.group = this.groups[0];
+      }
+      const result2 = await this.$axios.get(
+        "/v1/task/search/?taskType=ShortTerm"
+      );
+      if (result2.status === 200) {
+        this.data = result2.data;
+        this.dates = result2.data.map(item =>
+          dayjs
+            .utc(item.startDate)
+            .local()
+            .format("YYYY/MM/DD")
+        );
+        result2.data.forEach(item => {
+          if (
+            !this.tasks[
+              dayjs
+                .utc(item.startDate)
+                .local()
+                .format("YYYY/MM/DD")
+            ]
+          ) {
             this.tasks[
               dayjs
                 .utc(item.startDate)
                 .local()
                 .format("YYYY/MM/DD")
-            ].push(item);
-          });
-
-          if (this.$route.query.id) {
-            let result = this.data.find(
-              item => item.id === this.$route.query.id
-            );
-            if (result) {
-              let select = dayjs
-                .utc(result.startDate)
-                .local()
-                .format("YYYY/MM/DD");
-              this.date = select;
-              this.options = this.tasks[select];
-              this.$nextTick(() => {
-                this.value = result;
-              });
-              this.$store.commit("app/openLoading", false);
-            } else {
-              this.$router.push("/404");
-            }
-          } else {
-            let keys = Object.keys(this.tasks);
-            keys.sort(
-              (a, b) =>
-                new Date(b.startDate).getTime() -
-                new Date(a.startDate).getTime()
-            );
-            this.date = keys[0];
-            this.options = this.tasks[this.date];
-            this.value = this.tasks[this.date][0];
-            this.$store.commit("app/openLoading", false);
+            ] = [];
           }
-        }
-      })
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
+          this.tasks[
+            dayjs
+              .utc(item.startDate)
+              .local()
+              .format("YYYY/MM/DD")
+          ].push(item);
         });
+
+        if (this.$route.query.id) {
+          let result = this.data.find(item => item.id === this.$route.query.id);
+          if (result) {
+            let select = dayjs
+              .utc(result.startDate)
+              .local()
+              .format("YYYY/MM/DD");
+            this.date = select;
+            this.options = this.tasks[select];
+            this.$nextTick(() => {
+              this.value = result;
+              this.id = this.value.id;
+            });
+            this.$store.commit("app/openLoading", false);
+          } else {
+            this.$router.push("/404");
+          }
+        } else {
+          let keys = Object.keys(this.tasks);
+          keys.sort(
+            (a, b) =>
+              new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          );
+          let formatDate = keys.map(item =>
+            new Date(item.replace(/\//g, "-")).getTime()
+          );
+          let max = Math.max(...formatDate);
+          this.date = keys[formatDate.findIndex(item => item === max)];
+          this.options = this.tasks[this.date];
+          this.value = this.tasks[this.date][0];
+          this.id = this.value.id;
+          this.$store.commit("app/openLoading", false);
+        }
+      }
+      this.$store.commit("app/openLoading", false);
+    } catch (err) {
+      Toast({
+        message: "请求出错,请检查网络或刷新重试！",
+        duration: 0
       });
+    }
   },
-  methods: {}
+  methods: {
+    onLoad(number, loading, finished, data) {
+      setTimeout(() => {
+        if (this[number] < this[data].length) {
+          this[number] += 10;
+        }
+        this[loading] = false;
+        if (this[number] >= this[data].length) {
+          this[finished] = true;
+        }
+      }, 1000);
+    },
+    goPersonal(id) {
+      if (this.$store.state.user.info.roles.length >= 2) {
+        this.$router.push(`/user/personal?uid=${id}`);
+      }
+    },
+    initData() {
+      this.all = [];
+      this.one = [];
+      this.allNumber = 20;
+      this.allLoading = false;
+      this.allFinished = false;
+      this.oneNumber = 20;
+      this.oneLoading = false;
+      this.oneFinished = false;
+    },
+    initGroup() {
+      this.one = [];
+      this.oneNumber = 20;
+      this.oneLoading = false;
+      this.oneFinished = false;
+    }
+  }
 };
 </script>
