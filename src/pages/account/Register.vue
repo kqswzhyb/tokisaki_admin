@@ -137,7 +137,9 @@ export default {
     this.$store.commit("app/openLoading", true);
     this.$axios
       .get(
-        "/auth/qqloginCallback?code=D779B2A8D1B49391EC9EEF76031AE7B0&state=Mon+Dec+02+13%3A43%3A50+UTC+2019"
+        `/auth/qqloginCallback?code=${this.$route.query.code}&state=${
+          this.$route.query.state
+        }`
       )
       .then(res => {
         if (res.status === 200) {
@@ -169,7 +171,7 @@ export default {
               .get(`/auth/groupcode?code=${this.form.inviteCode}`)
               .then(res => {
                 if (res.status === 200) {
-                  this.groupName = res.data.groupname;
+                  this.groupName = res.data.groupName;
                   this.visible = true;
                 } else {
                   Toast("此邀请码不存在");
