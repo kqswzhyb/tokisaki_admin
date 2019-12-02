@@ -3,13 +3,22 @@
     <div style="margin:20px 0;display:flex;">
       <div>
         <img
-          src="https://cdn.quasar.dev/img/avatar2.jpg"
-          width="120px;"
+          v-if="info.iconUrl"
+          :src="info.iconUrl"
+          width="120"
+          height="120"
+          style="border-radius:10px;"
+        />
+        <img
+          v-else
+          src="../../assets/default_user.jpg"
+          width="120"
+          height="120"
           style="border-radius:10px;"
         />
       </div>
       <div style="margin:10px 0 0 50px;">
-        <div class="text-h5" style="margin-bottom:5px;">
+        <div style="margin-bottom:5px;font-size:18px;">
           <span>{{ info.nickName }}</span>
         </div>
         <div class="text-weight-medium">
@@ -20,7 +29,7 @@
         <div class="flex-start">
           <q-icon name="star" size="sm" style="color:#ff9800;" />
           <span style="color:#ff9800;" class="text-h6">{{
-            info.totalScore
+            info.totalScore ? info.totalScore : 0
           }}</span>
         </div>
       </div>
@@ -36,7 +45,7 @@
         <q-item-section top>
           <q-item-label lines="1">
             <p class="text-weight-medium">
-              <span style="color:#999;">QQ：</span>{{ info.qqNo }}
+              <span style="color:#999;">QQ：</span>{{ info.username }}
             </p>
           </q-item-label>
         </q-item-section>

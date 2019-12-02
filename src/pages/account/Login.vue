@@ -85,6 +85,7 @@ export default {
           });
           this.loading = false;
         } else {
+          Toast.success("登录成功");
           this.$store.commit("user/SET_TOKEN", res.data.token);
           setToken(res.data.token);
           this.$router.push({ path: "/home" });
@@ -92,14 +93,28 @@ export default {
         }
       } catch {
         Toast({
-          message: "请求出错,请检查网络或刷新重试！"
+          message: "请求出错,请检查网络或刷新重试！",
+          duration: 0
         });
         this.loading = false;
       }
     },
     goQQ() {
-      window.location.href =
-        "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101825291&redirect_uri=https://tokisaki.cn/qqloin&state=test";
+      this.$axios
+        .get("/auth/qqlogin")
+        .then(res => {
+          if (res.status === 200) {
+            window.location.href = res.data.url;
+          } else {
+            this.$router.push("/404");
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
     }
   }
 };

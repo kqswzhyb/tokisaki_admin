@@ -36,7 +36,18 @@
           <q-item>
             <q-item-section top avatar>
               <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                <img
+                  v-if="item.iconUrl"
+                  :src="item.iconUrl"
+                  width="40"
+                  height="40"
+                />
+                <img
+                  v-else
+                  src="../assets/default_user.jpg"
+                  width="40"
+                  height="40"
+                />
               </q-avatar>
             </q-item-section>
 

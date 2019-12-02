@@ -126,7 +126,7 @@
         style="height: calc(100% - 131px); margin-top: 131px; border-right: 1px solid #ddd"
       >
         <q-list>
-          <q-item clickable v-ripple to="/user/messages/2">
+          <!-- <q-item clickable v-ripple to="/user/messages/2">
             <q-item-section avatar class="q-ml-sm">
               <q-icon
                 name="img:statics/icons/message.svg"
@@ -142,7 +142,7 @@
                 </q-badge>
               </div>
             </q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-item clickable v-ripple to="/notices?type=2">
             <q-item-section avatar class="q-ml-sm">
@@ -157,7 +157,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/user/scores/7">
+          <!-- <q-item clickable v-ripple to="/user/scores/7">
             <q-item-section avatar class="q-ml-sm">
               <q-icon
                 name="img:statics/icons/empty-star.svg"
@@ -168,7 +168,7 @@
             <q-item-section>
               积分明细
             </q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-item
             clickable
@@ -220,9 +220,20 @@
       >
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="44px" class="q-mb-xs q-mt-xs">
-            <img src="../assets/default_user.jpg" />
+            <img
+              v-if="info.user.iconUrl"
+              :src="info.user.iconUrl"
+              width="40"
+              height="40"
+            />
+            <img
+              v-else
+              src="../assets/default_user.jpg"
+              width="40"
+              height="40"
+            />
           </q-avatar>
-          <div class="q-ml-xs text-weight-bold" style="color:#505050;">
+          <div class="text-weight-bold" style="color:#505050;">
             {{ info ? info.user.nickName : "未登录" }}
           </div>
         </div>

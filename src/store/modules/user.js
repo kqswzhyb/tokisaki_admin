@@ -28,12 +28,11 @@ const actions = {
       })
         .then(res => {
           if (res.status === 200) {
-            commit(
-              "SET_INFO",
-              Object.assign({}, res.data, {
-                totalScore: Number(res.data.user.totalScore)
-              })
-            );
+            const info = Object.assign({}, res.data);
+            res.data.user.totalScore = res.data.user.totalScore
+              ? Number(res.data.user.totalScore)
+              : 0;
+            commit("SET_INFO", info);
           }
           resolve(res.data);
         })

@@ -93,8 +93,16 @@
                 <q-item-section avatar top>
                   <q-avatar>
                     <img
-                      src="https://cdn.quasar.dev/img/avatar2.jpg"
-                      style="width:40px;height:40px;"
+                      v-if="item.iconUrl"
+                      :src="item.iconUrl"
+                      width="40"
+                      height="40"
+                    />
+                    <img
+                      v-else
+                      src="../../assets/default_user.jpg"
+                      width="40"
+                      height="40"
                     />
                   </q-avatar>
                 </q-item-section>
@@ -152,8 +160,16 @@
                 <q-item-section avatar top>
                   <q-avatar>
                     <img
-                      src="https://cdn.quasar.dev/img/avatar2.jpg"
-                      style="width:40px;height:40px;"
+                      v-if="item.iconUrl"
+                      :src="item.iconUrl"
+                      width="40"
+                      height="40"
+                    />
+                    <img
+                      v-else
+                      src="../../assets/default_user.jpg"
+                      width="40"
+                      height="40"
                     />
                   </q-avatar>
                 </q-item-section>
