@@ -8,7 +8,7 @@
         <q-input
           class="main"
           v-model="form.username"
-          label="QQ号（用作帐号）"
+          label="QQ号码(用作帐号——重要！！！)"
           :rules="[
             val => (val && /^[0-9]+$/gi.test(val)) || '请输入你在群中的QQ号码'
           ]"

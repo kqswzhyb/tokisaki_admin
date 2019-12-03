@@ -14,7 +14,8 @@ Vue.use(Router);
  */
 const createRouter = routes2 =>
   new Router({
-    // mode: 'history', // require service support
+    // mode: "history", // require service support
+    // base: "/",
     scrollBehavior: to => {
       if (to.path.includes("/user/messages")) {
         return { x: 0, y: 900 };

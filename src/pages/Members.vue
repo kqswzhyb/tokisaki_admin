@@ -26,8 +26,17 @@
         style="width:40vw;min-width:150px;"
       />
     </div>
+
     <q-list bordered padding v-if="data.length !== 0">
-      <div v-if="!listLoading">
+      <van-list
+        v-if="!listLoading"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多数据了"
+        loading-text=""
+        :offset="30"
+        @load="onLoad"
+      >
         <div
           @click="$router.push(`/user/center/${item.id}`)"
           v-for="(item, index) in data"
@@ -53,12 +62,13 @@
 
             <q-item-section>
               <q-item-label>{{ item.username }}</q-item-label>
-              <q-item-label caption>{{ item.userCode }}</q-item-label>
             </q-item-section>
 
             <q-item-section side top class="flex-center">
               <q-icon name="star" size="xs" style="color:#ff9800;" />
-              <span style="color:#ff9800;">{{ item.totalScore }}</span>
+              <span style="color:#ff9800;">{{
+                item.totalScore ? item.totalScore : 0
+              }}</span>
             </q-item-section>
 
             <q-item-section side top class="flex-around">
@@ -78,7 +88,7 @@
           </q-item>
           <q-separator inset="item" v-if="index !== data.length - 1" />
         </div>
-      </div>
+      </van-list>
       <div
         v-else
         class="flex-center column"
@@ -142,7 +152,7 @@
 </template>
 
 <script>
-import { Toast } from "vant";
+import { Toast, List as VanList } from "vant";
 const groupAll = { id: 0, groupName: "全部" };
 const statusAll = {
   value: "All",
@@ -150,6 +160,9 @@ const statusAll = {
 };
 export default {
   name: "members",
+  components: {
+    VanList
+  },
   data() {
     return {
       listLoading: false,
@@ -185,7 +198,10 @@ export default {
       data: [],
       selectedId: "",
       role: 0,
-      auth: 0
+      auth: 0,
+      loading: false,
+      finished: false,
+      number: 10
     };
   },
   watch: {
@@ -212,6 +228,7 @@ export default {
           );
         }
         this.data = result.data.filter(item => item.roles.length !== 3);
+        this.initData();
         this.listLoading = false;
       } catch (err) {
         Toast({
@@ -243,6 +260,7 @@ export default {
           );
         }
         this.data = result.data.filter(item => item.roles.length !== 3);
+        this.initData();
         this.listLoading = false;
       } catch (err) {
         Toast({
@@ -277,6 +295,22 @@ export default {
     }
   },
   methods: {
+    initData() {
+      this.loading = false;
+      this.finished = false;
+      this.number = 10;
+    },
+    onLoad() {
+      setTimeout(() => {
+        if (this.number < this.data.length) {
+          this.number += 10;
+        }
+        this.loading = false;
+        if (this.number >= this.data.length) {
+          this.finished = true;
+        }
+      }, 1000);
+    },
     openDialog(id, type) {
       if (this.$store.state.user.info.roles.length > type) {
         this.selectedId = id;

@@ -1,9 +1,12 @@
 <template>
   <div class="q-pa-md">
     <div style="margin-bottom:20px;">
-      当前用户：<span class="text-h6" style="color:#505050;">{{
-        nickName
-      }}</span>
+      当前用户：<span
+        class="text-h6"
+        style="color:#505050;"
+        @click="$router.push(`/user/center/${id}`)"
+        >{{ nickName }}</span
+      >
     </div>
     <div style="margin-bottom:20px;">
       当前任务：<span
@@ -131,7 +134,8 @@ export default {
       finished: false,
       hasMore: false,
       nickName: "",
-      role: 0
+      role: 0,
+      id: ""
     };
   },
   created() {
@@ -152,6 +156,7 @@ export default {
             this.data = res.data;
             this.nickName = res3.data.nickName;
             this.taskName = res2.data.taskName;
+            this.id = res3.data.id;
             this.role = res3.data.roles.length;
             this.data = this.data.map(item => {
               return Object.assign({}, item, {

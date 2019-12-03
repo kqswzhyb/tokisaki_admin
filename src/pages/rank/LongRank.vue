@@ -103,7 +103,6 @@
 
                 <q-item-section>
                   <q-item-label lines="1">{{ item.nickName }}</q-item-label>
-                  <q-item-label caption>{{ item.userCode }}</q-item-label>
                 </q-item-section>
 
                 <q-item-section side>
@@ -168,7 +167,6 @@
 
                 <q-item-section>
                   <q-item-label lines="1">{{ item.nickName }}</q-item-label>
-                  <q-item-label caption>{{ item.userCode }}</q-item-label>
                 </q-item-section>
 
                 <q-item-section side>

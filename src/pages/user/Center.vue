@@ -21,11 +21,6 @@
         <div style="margin-bottom:5px;font-size:18px;">
           <span>{{ info.nickName }}</span>
         </div>
-        <div class="text-weight-medium">
-          <span class="text-h6" style="color:#505050;">{{
-            info.userCode
-          }}</span>
-        </div>
         <div class="flex-start">
           <q-icon name="star" size="sm" style="color:#ff9800;" />
           <span style="color:#ff9800;" class="text-h6">{{

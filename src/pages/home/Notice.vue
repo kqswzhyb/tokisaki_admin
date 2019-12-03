@@ -24,12 +24,12 @@
         {{ data.taskName }}
         <img
           v-if="new Date(data.endDate).getTime() > currentDate.getTime()"
-          src="~assets/svgs/working.svg"
+          src="/assets/svgs/working.svg"
           style="width:40px;height:40px"
         />
         <img
           v-else
-          src="~assets/svgs/finish.svg"
+          src="/assets/svgs/finish.svg"
           style="width:40px;height:40px;"
         />
         <div>
@@ -39,12 +39,6 @@
             class="text-primary"
             style="font-size: 20px;margin-right:15px;"
             @click="$router.push(`/task/edit/${data.id}`)"
-          />
-          <q-icon
-            name="cloud_download"
-            v-if="$store.state.user.info.roles.length >= 3"
-            class="text-primary"
-            style="font-size: 20px;"
           />
         </div>
       </div>
