@@ -23,7 +23,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
-        url: "https://www.kurumiqq.com:8090/api/me",
+        url: "https://www.kurumiqq.com/api/me",
         headers: { Authorization: `Bearer ${getToken()}` }
       })
         .then(res => {
