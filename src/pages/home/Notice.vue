@@ -24,12 +24,12 @@
         {{ data.taskName }}
         <img
           v-if="new Date(data.endDate).getTime() > currentDate.getTime()"
-          src="/assets/svgs/working.svg"
+          src="~assets/svgs/working.svg"
           style="width:40px;height:40px"
         />
         <img
           v-else
-          src="/assets/svgs/finish.svg"
+          src="~assets/svgs/finish.svg"
           style="width:40px;height:40px;"
         />
         <div>
