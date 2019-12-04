@@ -3,8 +3,13 @@
     <div class="q-mb-xl q-mt-xl text-h5 main text-center">
       <span>群组管理系统</span>
     </div>
-    <q-form class="q-gutter-md">
-      <q-input class="main" v-model="form.username" label="用户名">
+    <q-form class="q-gutter-md" @submit="onSubmit" ref="form">
+      <q-input
+        class="main"
+        v-model="form.username"
+        label="用户名"
+        :rules="[val => (val && val.length > 0) || '请输入用户名']"
+      >
         <template v-slot:prepend>
           <q-icon name="person" />
         </template>
@@ -14,20 +19,30 @@
         v-model="form.password"
         type="password"
         label="密码"
+        :rules="[val => (val && val.length > 0) || '请输入密码']"
       >
         <template v-slot:prepend>
           <q-icon name="lock" />
         </template>
       </q-input>
+      <div class="row justify-between items-start">
+        <q-input
+          class="main"
+          v-model="form.captcha"
+          style="width:40vw"
+          label="验证码"
+          :rules="[val => (val && val.length > 0) || '请输入验证码']"
+        >
+        </q-input>
+        <img :src="img" style="width:45vw" alt="" @click="getCaptcha" />
+      </div>
       <div style="width:100%;">
         <van-button
-          style="width:95%;"
+          style="width:95%;color: #fff;background-color: #e66457;border: 1px solid #e66457;"
           :loading="loading"
           :disabled="loading"
-          type="info"
+          type="submit"
           loading-text="正在登录..."
-          color="#e66457"
-          @click="onSubmit"
           >登录</van-button
         >
       </div>
@@ -55,49 +70,87 @@ export default {
       loading: false,
       form: {
         username: "admin",
-        password: "password"
-      }
+        password: "password",
+        captcha: ""
+      },
+      img: ""
     };
   },
+  created() {
+    this.getCaptcha();
+  },
   methods: {
-    async onSubmit() {
-      if (!this.form.username || !this.form.password) {
-        Toast.fail("用户名和密码不能为空");
-        return;
-      }
-      this.loading = true;
-      try {
-        const res = await this.$axios.post(
-          "/auth/signin",
-          {
-            username: this.form.username,
-            password: this.form.password
-          },
-          {
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8"
-            }
-          }
-        );
-        if (res.status !== 200) {
+    getCaptcha() {
+      this.$axios
+        .get("/auth/getcaptcha", {
+          responseType: "arraybuffer"
+        })
+        .then(res => {
+          this.img =
+            "data:image/png;base64," +
+            btoa(
+              new Uint8Array(res.data).reduce(
+                (data, byte) => data + String.fromCharCode(byte),
+                ""
+              )
+            );
+        })
+        .catch(() => {
           Toast({
-            message: "帐号或密码错误"
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
           });
-          this.loading = false;
-        } else {
-          Toast.success("登录成功");
-          this.$store.commit("user/SET_TOKEN", res.data.token);
-          setToken(res.data.token);
-          this.$router.push({ path: "/home" });
-          this.loading = false;
-        }
-      } catch {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
         });
-        this.loading = false;
-      }
+    },
+    async onSubmit() {
+      this.$refs.form.validate().then(async success => {
+        if (success) {
+          this.loading = true;
+          try {
+            const res = await this.$axios.post(
+              "/auth/signin",
+              {
+                username: this.form.username,
+                password: this.form.password,
+                code: this.form.captcha
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json; charset=UTF-8"
+                }
+              }
+            );
+            if (res.status !== 200) {
+              Toast({
+                message: "密码或验证码错误"
+              });
+              this.getCaptcha();
+              this.form.captcha = "";
+              this.loading = false;
+            } else {
+              if (res.data.token) {
+                Toast.success("登录成功");
+                this.$store.commit("user/SET_TOKEN", res.data.token);
+                setToken(res.data.token);
+                this.$router.push({ path: "/home" });
+              } else {
+                Toast({
+                  message: "密码或验证码错误"
+                });
+                this.getCaptcha();
+                this.form.captcha = "";
+              }
+              this.loading = false;
+            }
+          } catch {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+            this.loading = false;
+          }
+        }
+      });
     },
     goQQ() {
       this.$axios

@@ -64,6 +64,17 @@
             />
           </template>
         </q-input>
+        <div class="row justify-between items-start">
+          <q-input
+            class="main"
+            v-model="form.captcha"
+            style="width:40vw"
+            label="验证码"
+            :rules="[val => (val && val.length > 0) || '请输入验证码']"
+          >
+          </q-input>
+          <img :src="img" style="width:45vw" alt="" @click="getCaptcha" />
+        </div>
         <div style="width:100%;">
           <van-button
             :disabled="disabled"
@@ -122,10 +133,12 @@ export default {
         username: "",
         password: "",
         confirmPassword: "",
-        inviteCode: ""
+        inviteCode: "",
+        captcha: ""
       },
       groupName: "",
-      visible: false
+      visible: false,
+      img: ""
     };
   },
   computed: {
@@ -156,12 +169,35 @@ export default {
             this.$router.push({ path: this.redirect || "/" });
           } else {
             this.form.id = res.data.id;
+            this.getCaptcha();
             this.$store.commit("app/openLoading", false);
           }
         }
       });
   },
   methods: {
+    getCaptcha() {
+      this.$axios
+        .get("/auth/getcaptcha", {
+          responseType: "arraybuffer"
+        })
+        .then(res => {
+          this.img =
+            "data:image/png;base64," +
+            btoa(
+              new Uint8Array(res.data).reduce(
+                (data, byte) => data + String.fromCharCode(byte),
+                ""
+              )
+            );
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
+    },
     async onSubmit() {
       this.$refs.form.validate().then(async success => {
         if (success) {
@@ -199,7 +235,8 @@ export default {
             username: this.form.username,
             password: this.form.password,
             groupInvite: this.form.inviteCode,
-            id: this.form.id
+            id: this.form.id,
+            code: this.form.captcha
           },
           {
             headers: {
@@ -208,14 +245,24 @@ export default {
           }
         );
         if (res.status !== 200) {
-          Toast("帐号或密码错误");
+          Toast("密码或验证码错误");
+          this.getCaptcha();
+          this.form.captcha = "";
           this.disabled = false;
           this.loading = false;
         } else {
-          Toast.success("登录成功");
-          this.$store.commit("user/SET_TOKEN", res.data.token);
-          setToken(res.data.token);
-          this.$router.push({ path: this.redirect || "/" });
+          if (res.data.token) {
+            Toast.success("注册成功");
+            this.$store.commit("user/SET_TOKEN", res.data.token);
+            setToken(res.data.token);
+            this.$router.push({ path: "/home" });
+          } else {
+            Toast({
+              message: "密码或验证码错误"
+            });
+            this.getCaptcha();
+            this.form.captcha = "";
+          }
           this.disabled = false;
           this.loading = false;
         }

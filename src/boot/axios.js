@@ -27,6 +27,7 @@ axios.interceptors.request.use(config => {
   }
   return config;
 });
+axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "https://www.kurumiqq.com/api";
 Vue.prototype.$axios = axios;
 Vue.prototype.$baseURL =
