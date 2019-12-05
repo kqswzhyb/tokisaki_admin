@@ -20,7 +20,7 @@ module.exports = function(ctx) {
       // 'themify',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      "roboto-font", // optional, you are not bound to it
+      // "roboto-font", // optional, you are not bound to it
       "material-icons" // optional, you are not bound to it
     ],
 
@@ -53,9 +53,9 @@ module.exports = function(ctx) {
       scopeHoisting: true,
       vueRouterMode: "history",
       // showProgress: false,
-      // gzip: true,
+      gzip: true,
       // analyze: true,
-      // preloadChunks: false,
+      // preloadChunks: true,
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack

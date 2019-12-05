@@ -69,8 +69,8 @@ export default {
     return {
       loading: false,
       form: {
-        username: "admin",
-        password: "password",
+        username: "",
+        password: "",
         captcha: ""
       },
       img: ""
