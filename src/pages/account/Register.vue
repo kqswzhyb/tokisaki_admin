@@ -156,6 +156,14 @@ export default {
       )
       .then(res => {
         if (res.status === 200) {
+          if (res.data.status === "frozen") {
+            Toast({
+              message: "该帐号已被冻结"
+            });
+            this.$store.commit("app/openLoading", false);
+            this.$router.push("/home");
+            return;
+          }
           if (!res.data) {
             Toast("请先通过QQ授权再注册");
             this.$store.commit("app/openLoading", false);
@@ -245,7 +253,7 @@ export default {
           }
         );
         if (res.status !== 200) {
-          Toast("密码或验证码错误");
+          Toast("邀请码或验证码错误");
           this.getCaptcha();
           this.form.captcha = "";
           this.disabled = false;
@@ -258,7 +266,7 @@ export default {
             this.$router.push({ path: "/home" });
           } else {
             Toast({
-              message: "密码或验证码错误"
+              message: "邀请码或验证码错误"
             });
             this.getCaptcha();
             this.form.captcha = "";

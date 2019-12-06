@@ -162,20 +162,32 @@ export default {
               week: res2.data.weekList
                 ? `${
                     res2.data.weekList
-                      ? res2.data.weekList.findIndex(item => item.id === id)
+                      ? res2.data.weekList.findIndex(item => item.id === id) ===
+                        -1
+                        ? 0
+                        : res2.data.weekList.findIndex(item => item.id === id) +
+                          1
                       : -1 + 1
                   } / ${res2.data.weekList ? res2.data.weekList.length : 0}`
                 : "0 / 0",
               month: res2.data.monthList
                 ? `${
                     res2.data.monthList
-                      ? res2.data.monthList.findIndex(item => item.id === id)
+                      ? res2.data.monthList.findIndex(
+                          item => item.id === id
+                        ) === -1
+                        ? 0
+                        : res2.data.monthList.findIndex(
+                            item => item.id === id
+                          ) + 1
                       : -1 + 1
                   } / ${res2.data.monthList ? res2.data.monthList.length : 0}`
                 : "0 / 0",
               total: `${
                 res2.data.allList
-                  ? res2.data.allList.findIndex(item => item.id === id)
+                  ? res2.data.allList.findIndex(item => item.id === id) === -1
+                    ? 0
+                    : res2.data.allList.findIndex(item => item.id === id) + 1
                   : -1 + 1
               } / ${res2.data.allList ? res2.data.allList.length : 0}`
             };

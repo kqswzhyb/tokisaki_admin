@@ -43,6 +43,11 @@
           :key="item.id"
         >
           <q-item>
+            <div class="flex-center q-mr-sm">
+              <span style="color:#505050;font-size:14px">{{
+                item.userGroup ? item.userGroup.groupName : ""
+              }}</span>
+            </div>
             <q-item-section top avatar>
               <q-avatar>
                 <img
@@ -61,7 +66,10 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{ item.username }}</q-item-label>
+              <q-item-label>{{ item.nickName }}</q-item-label>
+              <q-item-label style="color:#666;">{{
+                item.username
+              }}</q-item-label>
             </q-item-section>
 
             <q-item-section side top class="flex-center">
@@ -109,20 +117,21 @@
       transition-show="scale"
       transition-hide="scale"
     >
-      <q-card class="bg-teal text-white" style="width: 300px">
+      <q-card style="min-width: 280px;width:90vw;">
         <q-card-section>
           <div class="text-h6">权限更改</div>
         </q-card-section>
 
         <q-card-section>
-          <div class="q-gutter-sm">
-            <q-radio v-model="role" :val="1" label="组员" />
-            <q-radio v-model="role" :val="2" label="组长" />
-          </div>
+          <p>
+            将此用户设置为
+            <span class="main">{{ role === 2 ? " 组员 " : " 组长 " }}</span>
+            ,是否继续
+          </p>
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="确定" v-close-popup />
+          <q-btn flat label="确定" @click="changeRole" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -131,20 +140,23 @@
       transition-show="scale"
       transition-hide="scale"
     >
-      <q-card class="bg-teal text-white" style="width: 300px">
+      <q-card style="min-width: 280px;width:90vw;">
         <q-card-section>
-          <div class="text-h6">状态更改</div>
+          <div class="text-h6">帐号状态更改</div>
         </q-card-section>
 
         <q-card-section>
-          <div class="q-gutter-sm">
-            <q-radio v-model="auth" val="Normal" label="正常" />
-            <q-radio v-model="auth" val="Frozen" label="冻结" />
-          </div>
+          <p>
+            将此用户帐号状态为
+            <span class="main">{{
+              auth === "Normal" ? " 冻结 " : " 正常 "
+            }}</span>
+            ,是否继续
+          </p>
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="确定" v-close-popup />
+          <q-btn flat label="确定" @click="changeStatus" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -312,7 +324,7 @@ export default {
       }, 1000);
     },
     openDialog(id, type) {
-      if (this.$store.state.user.info.roles.length > type) {
+      if (this.$store.state.user.info.roles.length >= 2) {
         this.selectedId = id;
         this.role = type;
         this.dialogShow = true;
@@ -324,6 +336,59 @@ export default {
         this.auth = type;
         this.dialogShow2 = true;
       }
+    },
+    changeStatus() {
+      this.$axios
+        .post(`/v1/user/changeuserstatus/${this.selectedId}/`)
+        .then(res => {
+          if (res.status === 200) {
+            const index = this.data.findIndex(
+              item => item.id === this.selectedId
+            );
+            this.$set(
+              this.data,
+              index,
+              Object.assign({}, this.data[index], {
+                userStatus: this.auth === "Normal" ? "Frozen" : "Normal"
+              })
+            );
+            Toast.success("设置成功");
+            this.dialogShow2 = false;
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
+    },
+    changeRole() {
+      this.$axios
+        .post(`/v1/user/changeuserrole/${this.selectedId}/`)
+        .then(res => {
+          if (res.status === 200) {
+            const index = this.data.findIndex(
+              item => item.id === this.selectedId
+            );
+            this.$set(
+              this.data,
+              index,
+              Object.assign({}, this.data[index], {
+                roles:
+                  this.role === 2 ? ["ROLE_USER"] : ["ROLE_USER", "ROLE_LEADER"]
+              })
+            );
+            Toast.success("设置成功");
+            this.dialogShow = false;
+          }
+        })
+        .catch(() => {
+          Toast({
+            message: "请求出错,请检查网络或刷新重试！",
+            duration: 0
+          });
+        });
     }
   }
 };

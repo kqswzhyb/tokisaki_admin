@@ -128,6 +128,11 @@ export default {
               this.form.captcha = "";
               this.loading = false;
             } else {
+              if (res.data.status === "frozen") {
+                Toast({
+                  message: "该帐号已被冻结"
+                });
+              }
               if (res.data.token) {
                 Toast.success("登录成功");
                 this.$store.commit("user/SET_TOKEN", res.data.token);

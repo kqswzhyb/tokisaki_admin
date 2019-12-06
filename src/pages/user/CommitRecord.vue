@@ -75,7 +75,7 @@
       </van-list>
     </q-list>
     <q-dialog v-model="prompt" @hide="hide">
-      <q-card style="min-width: 350px;width:90%;">
+      <q-card style="min-width: 250px;width:90%;">
         <q-card-section>
           <div class="text-h6">修改此次提交获得积分</div>
         </q-card-section>
@@ -230,10 +230,12 @@ export default {
       this.prompt = false;
     },
     open(id, index, score) {
-      this.score = score;
-      this.selectedId = id;
-      this.index = index;
-      this.prompt = true;
+      if (this.$store.state.user.info.roles.length > this.role) {
+        this.score = score;
+        this.selectedId = id;
+        this.index = index;
+        this.prompt = true;
+      }
     },
     onSubmit() {
       if (this.$store.state.user.info.roles.length > this.role) {
@@ -252,7 +254,7 @@ export default {
               );
               if (res.status !== 200) {
                 Toast({
-                  message: `判定积分不能大于${this.data[0].task.taskScore}`
+                  message: "请求出错"
                 });
                 this.loading = false;
               } else {
