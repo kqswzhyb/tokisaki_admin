@@ -1,7 +1,7 @@
 import Vue from "vue";
 import axios from "axios";
 import { getToken } from "../utils/auth";
-import "@vant/touch-emulator";
+// import "@vant/touch-emulator";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import utc from "dayjs/plugin/utc";

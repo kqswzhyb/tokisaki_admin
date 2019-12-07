@@ -175,6 +175,13 @@
 
                 <q-item-section>
                   <q-item-label lines="1">{{ item.nickName }}</q-item-label>
+                  <q-item-label
+                    lines="1"
+                    style="padding:0;font-size:14px;color:#505050;"
+                    >{{
+                      item.userGroup ? item.userGroup.groupName : "暂无小组"
+                    }}</q-item-label
+                  >
                 </q-item-section>
 
                 <q-item-section side>

@@ -26,6 +26,11 @@
         style="width:40vw;min-width:150px;"
       />
     </div>
+    <div class="q-mb-md">
+      <p style="margin:0 20px;">
+        找到数据 <span class="main">{{ data.length || 0 }}</span> 条
+      </p>
+    </div>
 
     <q-list bordered padding v-if="data.length !== 0">
       <van-list
@@ -324,7 +329,10 @@ export default {
       }, 1000);
     },
     openDialog(id, type) {
-      if (this.$store.state.user.info.roles.length >= 2) {
+      if (
+        this.$store.state.user.info.roles.length >= 2 &&
+        this.$store.state.user.info.user.id !== id
+      ) {
         this.selectedId = id;
         this.role = type;
         this.dialogShow = true;
