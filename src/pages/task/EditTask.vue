@@ -159,57 +159,61 @@ export default {
           "_"
         ),
         firstDayOfWeek: 1
-      }
+      },
+      timer: ""
     };
   },
   components: {
     MyUploader,
     VanButton
   },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    tasks() {
+      return this.$store.state.task.tasks.find(
+        item => item.id === this.$route.params.id
+      );
+    }
+  },
   created() {
     this.$store.commit("app/openLoading", true);
-    this.$axios
-      .get(`/v1/task/${this.$route.params.id}`)
-      .then(res => {
-        if (res.status === 200) {
-          this.form.taskName = res.data.taskName;
-          this.form.taskType = res.data.taskType;
-          this.form.taskScore = String(res.data.taskScore);
-          this.form.taskDetail = res.data.taskDetail;
-          this.form.startDate = dayjs
-            .utc(res.data.startDate)
-            .local()
-            .format("YYYY-MM-DD HH:mm");
-          this.form.endDate = dayjs
-            .utc(res.data.endDate)
-            .local()
-            .format("YYYY-MM-DD HH:mm");
-          if (res.data.taskAttachment) {
-            res.data.taskAttachment.forEach(item => {
-              this.images.push(
-                Object.assign(
-                  {},
-                  {
-                    url: `${this.$baseURL}/${item.attachment.attachType
-                      .slice(0, 1)
-                      .toLowerCase() + item.attachment.attachType.slice(1)}/${
-                      item.attachment.attachName
-                    }.${item.attachment.attachExtName}`,
-                    attachment: item.attachment
-                  }
-                )
-              );
-            });
-          }
-          this.$store.commit("app/openLoading", false);
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.form.taskName = this.tasks.taskName;
+        this.form.taskType = this.tasks.taskType;
+        this.form.taskScore = String(this.tasks.taskScore);
+        this.form.taskDetail = this.tasks.taskDetail;
+        this.form.startDate = dayjs
+          .utc(this.tasks.startDate)
+          .local()
+          .format("YYYY-MM-DD HH:mm");
+        this.form.endDate = dayjs
+          .utc(this.tasks.endDate)
+          .local()
+          .format("YYYY-MM-DD HH:mm");
+        if (this.tasks.taskAttachment) {
+          this.tasks.taskAttachment.forEach(item => {
+            this.images.push(
+              Object.assign(
+                {},
+                {
+                  url: `${this.$baseURL}/${item.attachment.attachType
+                    .slice(0, 1)
+                    .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                    item.attachment.attachName
+                  }.${item.attachment.attachExtName}`,
+                  attachment: item.attachment
+                }
+              )
+            );
+          });
         }
-      })
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      });
+        this.$store.commit("app/openLoading", false);
+      }
+    }, 500);
   },
   methods: {
     getImage(data) {

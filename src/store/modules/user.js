@@ -21,11 +21,8 @@ const actions = {
   // get user info
   getInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      axios({
-        method: "GET",
-        url: "https://www.kurumiqq.com/api/me",
-        headers: { Authorization: `Bearer ${getToken()}` }
-      })
+      axios
+        .get("/me")
         .then(res => {
           if (res.status === 200) {
             const info = Object.assign({}, res.data);

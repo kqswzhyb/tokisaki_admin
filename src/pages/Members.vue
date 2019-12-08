@@ -184,7 +184,6 @@ export default {
     return {
       listLoading: false,
       group: groupAll,
-      options: [],
       status: statusAll,
       options2: [
         {
@@ -218,8 +217,17 @@ export default {
       auth: 0,
       loading: false,
       finished: false,
-      number: 10
+      number: 10,
+      timer: ""
     };
+  },
+  computed: {
+    options() {
+      return [{ id: 0, groupName: "全部" }, ...this.$store.state.group.groups];
+    },
+    groups() {
+      return this.$store.state.group.groups;
+    }
   },
   watch: {
     status: async function(val) {
@@ -287,28 +295,17 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
     this.$store.commit("app/openLoading", true);
-    if (this.$store.state.user.info.user.userGroup) {
-      this.group = { id: this.$store.state.user.info.user.userGroup.id };
-      this.$store.commit("app/openLoading", false);
-    } else {
-      this.$axios
-        .get("/v1/usergroup/listall")
-        .then(async res => {
-          if (res.status === 200) {
-            this.options = [{ id: 0, groupName: "全部" }, ...res.data];
-            const result = await this.$axios.get("/v1/user");
-            this.data = result.data.filter(item => item.roles.length !== 3);
-            this.$store.commit("app/openLoading", false);
-          }
-        })
-        .catch(() => {
-          Toast({
-            message: "请求出错,请检查网络或刷新重试！",
-            duration: 0
-          });
-        });
+    if (this.groups[0]) {
+      clearInterval(this.timer);
+      if (this.$store.state.user.info.user.userGroup) {
+        this.group = { id: this.$store.state.user.info.user.userGroup.id };
+      } else {
+        const result = await this.$axios.get("/v1/user");
+        this.data = result.data.filter(item => item.roles.length !== 3);
+      }
+      this.$store.commit("app/openLoading", true);
     }
   },
   methods: {

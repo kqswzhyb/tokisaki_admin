@@ -135,8 +135,19 @@ export default {
       hasMore: false,
       nickName: "",
       role: 0,
-      id: ""
+      id: "",
+      timer: ""
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    tasks() {
+      return this.$store.state.task.tasks.find(
+        item => item.id === this.$route.params.id
+      );
+    }
   },
   created() {
     this.$store.commit("app/openLoading", true);
@@ -147,15 +158,21 @@ export default {
             this.$route.params.id
           }/`
         ),
-        this.$axios.get(`/v1/task/${this.$route.params.id}`),
         this.$axios.get(`/v1/user/${this.$route.query.uid}`)
       ])
       .then(
-        this.$axios.spread((res, res2, res3) => {
-          if (res.status === 200 && res2.status === 200 && res3.status == 200) {
+        this.$axios.spread((res, res3) => {
+          if (res.status === 200 && res3.status == 200) {
             this.data = res.data;
             this.nickName = res3.data.nickName;
-            this.taskName = res2.data.taskName;
+            this.timer = setInterval(async () => {
+              this.$store.commit("app/openLoading", true);
+              if (this.groups[0]) {
+                clearInterval(this.timer);
+                this.taskName = this.tasks.taskName;
+                this.$store.commit("app/openLoading", false);
+              }
+            }, 500);
             this.id = res3.data.id;
             this.role = res3.data.roles.length;
             this.data = this.data.map(item => {
@@ -174,7 +191,6 @@ export default {
                   []
               });
             });
-            this.$store.commit("app/openLoading", false);
           } else {
             this.$store.commit("app/openLoading", false);
             this.$router.push("/404");

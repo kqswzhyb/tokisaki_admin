@@ -214,13 +214,7 @@ export default {
       time: "week",
       tab: "all",
 
-      weekTime: {},
-      monthTime: {},
       showTime: {},
-
-      weekRankAll: [],
-      monthRankAll: [],
-      totalRankAll: [],
       all: [],
       one: [],
 
@@ -229,7 +223,6 @@ export default {
       allFinished: false,
 
       group: {},
-      groups: [],
 
       oneNumber: 10,
       oneLoading: false,
@@ -237,8 +230,29 @@ export default {
 
       oneWeek: [],
       oneTotal: [],
-      oneMonth: []
+      oneMonth: [],
+      timer: ""
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    weekTime() {
+      return this.$store.state.rank.weekTime;
+    },
+    monthTime() {
+      return this.$store.state.rank.monthTime;
+    },
+    weekRankAll() {
+      return this.$store.state.rank.weekRankAll;
+    },
+    monthRankAll() {
+      return this.$store.state.rank.monthRankAll;
+    },
+    totalRankAll() {
+      return this.$store.state.rank.totalRankAll;
+    }
   },
   watch: {
     time: {
@@ -287,12 +301,17 @@ export default {
               }
               switch (this.time) {
                 case "week":
+                  this.showTime = Object.assign({}, this.weekTime);
+                  this.all = JSON.parse(JSON.stringify(this.weekRankAll));
                   this.one = JSON.parse(JSON.stringify(this.oneWeek));
                   break;
                 case "month":
+                  this.showTime = Object.assign({}, this.monthTime);
+                  this.all = JSON.parse(JSON.stringify(this.monthRankAll));
                   this.one = JSON.parse(JSON.stringify(this.oneMonth));
                   break;
                 case "total":
+                  this.all = JSON.parse(JSON.stringify(this.totalRankAll));
                   this.one = JSON.parse(JSON.stringify(this.oneTotal));
                   break;
               }
@@ -311,80 +330,24 @@ export default {
   },
   async created() {
     this.$store.commit("app/openLoading", true);
-    try {
-      const result = await this.$axios.get("/v1/usergroup/listall");
-      if (result.status === 200) {
-        this.groups = result.data;
-      } else {
-        this.$router.push("/404");
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.$store.commit("app/openLoading", true);
+        if (this.$store.state.user.info.user.userGroup) {
+          this.group = {
+            id: this.$store.state.user.info.user.userGroup.id,
+            groupName: this.$store.state.user.info.user.userGroup.groupName
+          };
+        } else {
+          this.group = {
+            id: this.groups[0].id,
+            groupName: this.groups[0].groupName
+          };
+        }
+        this.$store.commit("app/openLoading", false);
       }
-    } catch (err) {
-      this.$message.error("请求出错,请检查网络或刷新重试！");
-    }
-    if (this.$store.state.user.info.user.userGroup) {
-      this.group = {
-        id: this.$store.state.user.info.user.userGroup.id,
-        groupName: this.$store.state.user.info.user.userGroup.groupName
-      };
-    } else {
-      this.group = {
-        id: this.groups[0].id,
-        groupName: this.groups[0].groupName
-      };
-    }
-    this.$axios
-      .all([
-        this.$axios.get(`/v1/rank/groupRank`),
-        this.$axios.get(`/v1/rank/groupRank/${this.group.id}`)
-      ])
-      .then(
-        this.$axios.spread((res, res2) => {
-          if (res.status === 200 && res2.status === 200) {
-            this.weekTime = {
-              start: res.data.weekStart,
-              end: res.data.weekEnd
-            };
-            if (res.data.weekList) {
-              this.weekRankAll = res.data.weekList;
-            }
-            this.monthTime = {
-              start: res.data.monthStart,
-              end: res.data.monthEnd
-            };
-            this.all = JSON.parse(JSON.stringify(this.weekRankAll));
-            this.showTime = Object.assign({}, this.weekTime);
-            if (res.data.monthList) {
-              this.monthRankAll = res.data.monthList;
-            }
-            this.totalRankAll = res.data.allList;
-            if (res2.data.groupWeekList) {
-              this.oneWeek = res2.data.groupWeekList;
-            }
-            if (res2.data.groupList) {
-              this.oneTotal = res2.data.groupList;
-            }
-            if (res2.data.groupMonthList) {
-              this.oneMonth = res2.data.groupMonthList;
-            }
-            this.one = JSON.parse(JSON.stringify(this.oneWeek));
-            switch (this.$route.query.type) {
-              case "week":
-                this.time = "week";
-                break;
-              case "month":
-                this.time = "month";
-                break;
-              case "total":
-                this.time = "total";
-                break;
-            }
-            this.$store.commit("app/openLoading", false);
-          }
-        })
-      )
-      .catch(() => {
-        this.$message.error("请求出错,请检查网络或刷新重试！");
-      });
+    }, 10);
   },
   methods: {
     onLoad(number, loading, finished, data) {

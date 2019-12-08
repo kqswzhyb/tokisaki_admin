@@ -266,6 +266,14 @@ export default {
   created() {
     this.getData();
   },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    task() {
+      return this.$store.state.task.tasks;
+    }
+  },
   methods: {
     onLoad() {
       setTimeout(() => {
@@ -283,24 +291,25 @@ export default {
       this.$axios
         .all([
           this.$axios.get(`/v1/user/${this.$route.params.id}`),
-          this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`),
-          this.$axios.get(`/v1/task`)
+          this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`)
         ])
         .then(
-          this.$axios.spread((res, res2, res3) => {
-            if (
-              res.status === 200 &&
-              res2.status === 200 &&
-              res3.status === 200
-            ) {
+          this.$axios.spread((res, res2) => {
+            if (res.status === 200 && res2.status === 200) {
               const taskIdList = Array.from(
                 new Set(res2.data.map(item => item.task.id))
               );
               this.info = res.data;
-              this.tasks = taskIdList.map(item =>
-                res3.data.find(item2 => item2.id === item)
-              );
-              this.$store.commit("app/openLoading", false);
+              this.timer = setInterval(async () => {
+                this.$store.commit("app/openLoading", true);
+                if (this.groups[0]) {
+                  clearInterval(this.timer);
+                  this.tasks = taskIdList.map(item =>
+                    this.task.find(item2 => item2.id === item)
+                  );
+                  this.$store.commit("app/openLoading", false);
+                }
+              }, 500);
             } else {
               this.$store.commit("app/openLoading", false);
               this.$router.push("/404");

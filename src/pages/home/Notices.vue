@@ -40,77 +40,45 @@
 </template>
 
 <script>
-import { Toast } from "vant";
 import { List as VanList } from "vant";
 export default {
   name: "notices",
   components: {
     VanList
   },
+  computed: {
+    shorts() {
+      return this.$store.state.task.shorts;
+    },
+    longs() {
+      return this.$store.state.task.longs;
+    },
+    groups() {
+      return this.$store.state.group.groups;
+    }
+  },
   data() {
     return {
       currentDate: new Date(),
       tasks: [],
+      timer: "",
       loading: false,
       finished: false,
       offset: 10
     };
   },
-  async created() {
-    this.$store.commit("app/openLoading", true);
+  watch: {
+    "$route.query": function() {
+      this.formatData();
+    }
+  },
+  created() {
     let types = [0, 1, 2];
     if (!types.includes(Number(this.$route.query.type))) {
       this.$router.push("/404");
     }
-    switch (Number(this.$route.query.type)) {
-      case 0:
-        try {
-          let res = await this.$axios.get(
-            "/v1/task/search/?taskType=ShortTerm"
-          );
-          this.tasks = res.data;
-        } catch (err) {
-          Toast({
-            message: "请求出错,请检查网络或刷新重试！",
-            duration: 0
-          });
-        }
-        break;
-      case 1:
-        try {
-          let res = await this.$axios.get("/v1/task/search/?taskType=LongTerm");
-          this.tasks = res.data;
-        } catch (err) {
-          Toast({
-            message: "请求出错,请检查网络或刷新重试！",
-            duration: 0
-          });
-        }
-        break;
-      case 2:
-        try {
-          let res = await this.$axios.get("/v1/task");
-          this.tasks = res.data;
-        } catch (err) {
-          Toast({
-            message: "请求出错,请检查网络或刷新重试！",
-            duration: 0
-          });
-        }
-        break;
-    }
-    this.tasks.sort(
-      (a, b) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
-    let working = this.tasks.filter(
-      item => new Date(item.endDate).getTime() > this.currentDate.getTime()
-    );
-    let finish = this.tasks.filter(
-      item => new Date(item.endDate).getTime() < this.currentDate.getTime()
-    );
-    this.tasks = working.concat(finish);
-    this.$store.commit("app/openLoading", false);
+    this.$store.commit("app/openLoading", true);
+    this.formatData();
   },
   methods: {
     onLoad() {
@@ -123,6 +91,38 @@ export default {
           this.finished = true;
         }
       }, 1000);
+    },
+    formatData() {
+      this.timer = setInterval(() => {
+        if (this.groups[0]) {
+          clearInterval(this.timer);
+          switch (Number(this.$route.query.type)) {
+            case 0:
+              this.tasks = this.shorts;
+              break;
+            case 1:
+              this.tasks = this.longs;
+              break;
+            case 2:
+              this.tasks = this.shorts.concat(this.longs);
+              break;
+          }
+          this.tasks.sort(
+            (a, b) =>
+              new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          );
+          let working = this.tasks.filter(
+            item =>
+              new Date(item.endDate).getTime() > this.currentDate.getTime()
+          );
+          let finish = this.tasks.filter(
+            item =>
+              new Date(item.endDate).getTime() < this.currentDate.getTime()
+          );
+          this.tasks = working.concat(finish);
+          this.$store.commit("app/openLoading", false);
+        }
+      }, 500);
     }
   }
 };

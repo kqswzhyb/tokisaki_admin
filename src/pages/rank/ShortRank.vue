@@ -253,8 +253,16 @@ export default {
       oneFinished: false,
 
       group: {},
-      groups: []
+      timer: ""
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    shorts() {
+      return this.$store.state.task.shorts;
+    }
   },
   watch: {
     date: {
@@ -318,30 +326,23 @@ export default {
   },
   async created() {
     this.$store.commit("app/openLoading", true);
-    try {
-      const result = await this.$axios.get("/v1/usergroup/listall");
-      if (result.status === 200) {
-        this.groups = result.data;
-      } else {
-        this.$router.push("/404");
-      }
-      if (this.$store.state.user.info.user.userGroup) {
-        this.group = this.$store.state.user.info.user.userGroup;
-      } else {
-        this.group = this.groups[0];
-      }
-      const result2 = await this.$axios.get(
-        "/v1/task/search/?taskType=ShortTerm"
-      );
-      if (result2.status === 200) {
-        this.data = result2.data;
-        this.dates = result2.data.map(item =>
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.$store.commit("app/openLoading", true);
+        if (this.$store.state.user.info.user.userGroup) {
+          this.group = this.$store.state.user.info.user.userGroup;
+        } else {
+          this.group = this.groups[0];
+        }
+        this.data = this.shorts;
+        this.dates = this.shorts.map(item =>
           dayjs
             .utc(item.startDate)
             .local()
             .format("YYYY/MM/DD")
         );
-        result2.data.forEach(item => {
+        this.shorts.forEach(item => {
           if (
             !this.tasks[
               dayjs
@@ -378,7 +379,6 @@ export default {
               this.value = result;
               this.id = this.value.id;
             });
-            this.$store.commit("app/openLoading", false);
           } else {
             this.$router.push("/404");
           }
@@ -396,16 +396,10 @@ export default {
           this.options = this.tasks[this.date];
           this.value = this.tasks[this.date][0];
           this.id = this.value.id;
-          this.$store.commit("app/openLoading", false);
         }
+        this.$store.commit("app/openLoading", false);
       }
-      this.$store.commit("app/openLoading", false);
-    } catch (err) {
-      Toast({
-        message: "请求出错,请检查网络或刷新重试！",
-        duration: 0
-      });
-    }
+    }, 10);
   },
   methods: {
     onLoad(number, loading, finished, data) {
@@ -419,9 +413,9 @@ export default {
         }
       }, 1000);
     },
-    goPersonal(id) {
+    goCenter(id) {
       if (this.$store.state.user.info.roles.length >= 2) {
-        this.$router.push(`/user/personal?uid=${id}`);
+        this.$router.push(`/user/center/${id}`);
       }
     },
     initData() {

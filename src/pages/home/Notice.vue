@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { ImagePreview, Toast } from "vant";
+import { ImagePreview } from "vant";
 export default {
   name: "notice",
   data() {
@@ -119,40 +119,40 @@ export default {
       slide: 0,
       confirm: false,
       data: {},
-      images: []
+      images: [],
+      timer: ""
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    tasks() {
+      return this.$store.state.task.tasks.find(
+        item => item.id === this.$route.params.id
+      );
+    }
   },
   created() {
     this.$store.commit("app/openLoading", true);
-    this.$axios
-      .get(`/v1/task/${this.$route.params.id}`)
-      .then(res => {
-        if (res.status === 200) {
-          this.data = res.data;
-          if (res.data.taskAttachment) {
-            res.data.taskAttachment.forEach(item => {
-              this.images.push(
-                `${this.$baseURL}/${item.attachment.attachType
-                  .slice(0, 1)
-                  .toLowerCase() + item.attachment.attachType.slice(1)}/${
-                  item.attachment.attachName
-                }.${item.attachment.attachExtName}`
-              );
-            });
-          }
-          this.$store.commit("app/openLoading", false);
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.data = this.tasks;
+        if (this.tasks.taskAttachment) {
+          this.tasks.taskAttachment.forEach(item => {
+            this.images.push(
+              `${this.$baseURL}/${item.attachment.attachType
+                .slice(0, 1)
+                .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                item.attachment.attachName
+              }.${item.attachment.attachExtName}`
+            );
+          });
         }
-        if (res.status === 202) {
-          this.$store.commit("app/openLoading", false);
-          this.$router.push("/404");
-        }
-      })
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      });
+        this.$store.commit("app/openLoading", false);
+      }
+    }, 500);
   },
   methods: {
     ReplaceUrl(text) {

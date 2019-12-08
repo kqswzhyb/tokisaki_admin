@@ -216,7 +216,7 @@ export default {
       oneFinished: false,
 
       group: {},
-      groups: []
+      timer: ""
     };
   },
   watch: {
@@ -272,48 +272,45 @@ export default {
       }
     }
   },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    },
+    longs() {
+      return this.$store.state.task.longs;
+    }
+  },
   async created() {
     this.$store.commit("app/openLoading", true);
-    try {
-      const result = await this.$axios.get("/v1/usergroup/listall");
-      if (result.status === 200) {
-        this.groups = result.data;
-      } else {
-        this.$router.push("/404");
-      }
-      if (this.$store.state.user.info.user.userGroup) {
-        this.group = this.$store.state.user.info.user.userGroup;
-      } else {
-        this.group = this.groups[0];
-      }
-      const result2 = await this.$axios.get(
-        "/v1/task/search/?taskType=LongTerm"
-      );
-      this.options = result2.data.sort(
-        (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
-      );
-      if (this.$route.query.id) {
-        let result = this.options.find(
-          item => item.id === this.$route.query.id
-        );
-        if (result) {
-          this.detail = result;
-          this.$store.commit("app/openLoading", false);
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.$store.commit("app/openLoading", true);
+        if (this.$store.state.user.info.user.userGroup) {
+          this.group = this.$store.state.user.info.user.userGroup;
         } else {
-          this.$router.push("/404");
+          this.group = this.groups[0];
         }
-      } else {
-        this.value = this.options[0].id;
-        this.detail = this.options[0];
+        this.options = this.longs.sort(
+          (a, b) =>
+            new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+        );
+        if (this.$route.query.id) {
+          let result = this.options.find(
+            item => item.id === this.$route.query.id
+          );
+          if (result) {
+            this.detail = result;
+          } else {
+            this.$router.push("/404");
+          }
+        } else {
+          this.value = this.options[0].id;
+          this.detail = this.options[0];
+        }
         this.$store.commit("app/openLoading", false);
       }
-      this.$store.commit("app/openLoading", false);
-    } catch (err) {
-      Toast({
-        message: "请求出错,请检查网络或刷新重试！",
-        duration: 0
-      });
-    }
+    }, 10);
   },
   methods: {
     onLoad(number, loading, finished, data) {
@@ -327,9 +324,9 @@ export default {
         }
       }, 1000);
     },
-    goPersonal(id) {
+    goCenter(id) {
       if (this.$store.state.user.info.roles.length >= 2) {
-        this.$router.push(`/user/personal?uid=${id}`);
+        this.$router.push(`/user/center/${id}`);
       }
     },
     initData() {

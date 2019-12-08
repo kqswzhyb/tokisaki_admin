@@ -273,6 +273,17 @@ export default {
       return this.$store.state.app.loading;
     }
   },
+  async created() {
+    this.$store.commit("app/openLoading", true);
+    try {
+      await this.$store.dispatch("rank/getRank");
+      await this.$store.dispatch("task/getTask");
+      await this.$store.dispatch("group/getGroups");
+      this.$store.commit("app/openLoading", false);
+    } catch (err) {
+      this.$message.error("请求出错,请检查网络或刷新重试！");
+    }
+  },
   methods: {
     async logout() {
       await this.$store.dispatch("user/logout");

@@ -4,6 +4,9 @@ import Vuex from "vuex";
 import user from "./modules/user";
 import permission from "./modules/permission";
 import app from "./modules/app";
+import rank from "./modules/rank";
+import task from "./modules/task";
+import group from "./modules/group";
 import getters from "./getters";
 
 Vue.use(Vuex);
@@ -18,7 +21,10 @@ export default function(/* { ssrContext } */) {
     modules: {
       user,
       permission,
-      app
+      app,
+      task,
+      rank,
+      group
     },
     getters,
     // enable strict mode (adds overhead!)

@@ -97,7 +97,6 @@ export default {
   name: "group",
   data() {
     return {
-      groups: [],
       form: {
         name: ""
       },
@@ -105,25 +104,21 @@ export default {
       dialogShow2: false,
       dialogShow: false,
       status: 0,
-      selectedId: ""
+      selectedId: "",
+      timer: ""
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    }
   },
   created() {
     this.$store.commit("app/openLoading", true);
-    this.$axios
-      .get("/v1/usergroup/listall")
-      .then(res => {
-        if (res.status === 200) {
-          this.groups = res.data;
-          this.$store.commit("app/openLoading", false);
-        }
-      })
-      .catch(() => {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      });
+    if (this.groups[0]) {
+      clearInterval(this.timer);
+      this.$store.commit("app/openLoading", false);
+    }
   },
   methods: {
     openDialog(id, type) {
@@ -166,7 +161,7 @@ export default {
             }
           }
         );
-        const res = await this.$axios.get("/v1/usergroup/listall");
+        const res = await this.$store.dispatch("group/getGroups");
         this.groups = res.data;
         this.dialogShow3 = false;
         Toast.success("创建成功");
