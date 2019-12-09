@@ -277,6 +277,9 @@ export default {
         }
       }
     },
+    value: function(val) {
+      this.id = val.id;
+    },
     id: async function(val) {
       if (Object.keys(this.group).length !== 0 && val) {
         this.$store.commit("app/openLoading", true);

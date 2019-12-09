@@ -11,7 +11,6 @@
     <MyUploader
       style="margin:20px 0;"
       ref="child"
-      :size="1024 * 1024 * 3"
       type="UserTask"
       :count="6"
       @input="getImages"

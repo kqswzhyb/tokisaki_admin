@@ -25,6 +25,12 @@
           <q-icon name="lock" />
         </template>
       </q-input>
+      <q-checkbox
+        dense
+        v-model="remain"
+        label="记住密码"
+        :style="{ color: remain ? '#e66457' : '#666' }"
+      />
       <div class="row justify-between items-start">
         <q-input
           class="main"
@@ -73,10 +79,15 @@ export default {
         password: "",
         captcha: ""
       },
-      img: ""
+      img: "",
+      remain: true
     };
   },
   created() {
+    if (localStorage.getItem("remain") === "true") {
+      this.form.username = localStorage.getItem("username");
+      this.form.password = localStorage.getItem("password");
+    }
     this.getCaptcha();
   },
   methods: {
@@ -134,6 +145,15 @@ export default {
                 });
               }
               if (res.data.token) {
+                if (this.remain) {
+                  localStorage.setItem("remain", "true");
+                  localStorage.setItem("username", this.form.username);
+                  localStorage.setItem("password", this.form.password);
+                } else {
+                  localStorage.setItem("remain", "false");
+                  localStorage.setItem("username", "");
+                  localStorage.setItem("password", "");
+                }
                 Toast.success("登录成功");
                 this.$store.commit("user/SET_TOKEN", res.data.token);
                 setToken(res.data.token);

@@ -34,7 +34,7 @@ export default {
   props: {
     size: {
       type: Number,
-      default: 1024 * 1024
+      default: 1024 * 1024 * 5
     },
     count: {
       type: Number,
@@ -85,42 +85,49 @@ export default {
       this.urls = [...this.images.filter(item => item.url)];
       const uploadList = this.images.filter(item => item.file);
       uploadList.forEach(async item => {
-        const param = new FormData();
-        param.append("file", item.file);
-        const result = await this.$axios.post(
-          `/v1/fileupload/cosUpload?fileType=${this.type}`,
-          param,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            },
-            onUploadProgress: progressEvent => {
-              this.current[progressEvent.total] = progressEvent.loaded;
-              this.percentage =
-                (Object.values(this.current).reduce((a, c) => a + c, 0) /
-                  Object.keys(this.current).reduce(
-                    (a, c) => Number(a) + Number(c),
-                    0
-                  )) *
-                100;
+        try {
+          const param = new FormData();
+          param.append("file", item.file);
+          const result = await this.$axios.post(
+            `/v1/fileupload/cosUpload?fileType=${this.type}`,
+            param,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data"
+              },
+              onUploadProgress: progressEvent => {
+                this.current[progressEvent.total] = progressEvent.loaded;
+                this.percentage =
+                  (Object.values(this.current).reduce((a, c) => a + c, 0) /
+                    Object.keys(this.current).reduce(
+                      (a, c) => Number(a) + Number(c),
+                      0
+                    )) *
+                  100;
+              }
             }
-          }
-        );
-        this.urls.push({
-          attachment: { id: result.data.id }
-        });
+          );
+          this.urls.push({
+            attachment: { id: result.data.id }
+          });
+        } catch (err) {
+          Toast({
+            message: "上传失败,请检查网络或刷新重试！",
+            duration: 0
+          });
+        }
       });
     },
     beforeRead(file) {
-      if (file instanceof Object && file.size >= this.size) {
-        Toast("上传单个图片不能大于3MB");
+      if (!(file instanceof Array) && file.size >= this.size) {
+        Toast("上传单个图片不能大于5MB");
         return false;
       }
       if (
         file instanceof Array &&
         !file.every(item => item.size <= this.size)
       ) {
-        Toast("上传单个图片不能大于3MB");
+        Toast("上传单个图片不能大于5MB");
         return false;
       }
       return true;

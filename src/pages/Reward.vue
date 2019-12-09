@@ -104,7 +104,6 @@
               ref="child"
               type="ScoreAward"
               :image="form.images"
-              :size="1024 * 1024 * 3"
               :count="1"
               @input="getImages"
               @img="getImage"
