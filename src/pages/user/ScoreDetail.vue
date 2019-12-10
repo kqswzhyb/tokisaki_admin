@@ -1,114 +1,110 @@
 <template>
   <div class="q-px-lg q-pb-md">
-    <q-timeline style="margin-top:20px;" :layout="layout" color="secondary">
-      <q-timeline-entry
-        title="世萌绿宝石项链赛"
-        subtitle="2019.10.20"
-        side="left"
-      >
-        <div>
-          完成10次任务，积分+10
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry title="众筹集资" subtitle="2019.10.20" side="right">
-        <div>
-          贡献100元，积分+100
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry
-        title="Event Title"
-        subtitle="February 22, 1986"
-        side="left"
-      >
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry
-        title="Event Title"
-        subtitle="February 22, 1986"
-        side="right"
-      >
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry
-        title="Event Title"
-        subtitle="February 22, 1986"
-        side="left"
-        color="orange"
-        icon="done_all"
-      >
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry
-        title="Event Title"
-        subtitle="February 22, 1986"
-        side="right"
-      >
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-      </q-timeline-entry>
-
-      <q-timeline-entry
-        title="Event Title"
-        subtitle="February 22, 1986"
-        side="left"
-      >
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-      </q-timeline-entry>
-    </q-timeline>
+    <van-list
+      v-if="list.length !== 0"
+      v-model="loading"
+      :finished="finished"
+      finished-text="已经到底了..."
+      loading-text=""
+      :offset="30"
+      @load="onLoad"
+    >
+      <q-timeline style="margin-top:20px;" :layout="layout" color="secondary">
+        <q-timeline-entry
+          v-for="(item, index) in list.slice(0, number)"
+          :key="index"
+          :title="item.task.taskName"
+          :subtitle="$options.filters.prettyDate(item.time)"
+          side="left"
+        >
+          <div>
+            <p v-if="item.action === 0">
+              因提交任务获得 <span class="main">{{ item.score }}</span> 分
+            </p>
+            <p v-else>
+              获得的积分被<span class="main"> {{ item.name }} </span>改为
+              <span class="main">{{ item.score }}</span> 分
+            </p>
+          </div>
+        </q-timeline-entry>
+      </q-timeline>
+    </van-list>
+    <div
+      v-else
+      class="flex-center"
+      style="flex-direction:column;margin-top:200px;"
+    >
+      <p>
+        <img src="~assets/svgs/sad.svg" style="width:50px;max-width:150px;" />
+      </p>
+      <span class="text-h5">没有记录</span>
+    </div>
   </div>
 </template>
 
 <script>
+import { List as VanList } from "vant";
 export default {
   name: "home",
+  components: {
+    VanList
+  },
   data() {
     return {
-      title: "世萌外交"
+      data: [],
+      list: [],
+      number: 10,
+      loading: false,
+      finished: false
     };
+  },
+  created() {
+    this.$store.commit("app/openLoading", true);
+    this.$axios
+      .get(`/v1/usertask/user/${this.$route.params.id}/`)
+      .then(res => {
+        if (res.status === 200) {
+          this.data = res.data;
+          this.this = [];
+          this.data.forEach(item => {
+            if (item.auditDate) {
+              this.list.push({
+                time: item.auditDate,
+                action: 1,
+                task: item.task,
+                score: item.taskScore,
+                name: item.auditUser.nickName
+              });
+            }
+            this.list.push({
+              time: item.finishedDate,
+              action: 0,
+              task: item.task,
+              score: item.task.taskScore
+            });
+          });
+          this.list.sort(
+            (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+          );
+          this.$store.commit("app/openLoading", false);
+        }
+      })
+      .catch(() => {
+        this.$message.error("请求出错,请检查网络或刷新重试！");
+      });
+  },
+  methods: {
+    onLoad() {
+      setTimeout(() => {
+        if (this.number < this.list.length) {
+          this.number += 10;
+        }
+        this.loading = false;
+        if (this.number >= this.list.length) {
+          this.finished = true;
+        }
+      }, 1000);
+    }
   },
   computed: {
     layout() {
@@ -118,7 +114,6 @@ export default {
         ? "comfortable"
         : "loose";
     }
-  },
-  methods: {}
+  }
 };
 </script>

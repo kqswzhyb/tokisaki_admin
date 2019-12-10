@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const state = {
   shorts: [],
   longs: [],
@@ -53,22 +51,10 @@ const mutations = {
 };
 
 const actions = {
-  getTask({ commit }) {
-    return new Promise((resolve, reject) => {
-      axios
-        .get("/v1/task")
-        .then(res => {
-          if (res.status === 200) {
-            commit("setShorts", res.data);
-            commit("setLongs", res.data);
-            commit("setTasks", res.data);
-          }
-          resolve(res.data);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+  getTask({ commit }, res) {
+    commit("setShorts", res.data);
+    commit("setLongs", res.data);
+    commit("setTasks", res.data);
   }
 };
 

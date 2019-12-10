@@ -44,7 +44,7 @@
       >
         <div
           @click="$router.push(`/user/center/${item.id}`)"
-          v-for="(item, index) in data"
+          v-for="(item, index) in data.slice(0, number)"
           :key="item.id"
         >
           <q-item>
@@ -57,7 +57,7 @@
               <q-avatar>
                 <img
                   v-if="item.iconUrl"
-                  :src="item.iconUrl"
+                  :src="item.iconUrl.replace('http', 'https')"
                   width="40"
                   height="40"
                 />
@@ -223,90 +223,137 @@ export default {
   },
   computed: {
     options() {
-      return [{ id: 0, groupName: "全部" }, ...this.$store.state.group.groups];
+      return [{ id: 0, groupName: "全部" }, ...this.groups];
     },
     groups() {
       return this.$store.state.group.groups;
     }
   },
   watch: {
-    status: async function(val) {
-      try {
-        this.listLoading = true;
-        let result;
-        if (val.label === statusAll.label && this.group.id === groupAll.id) {
-          result = await this.$axios.get("/v1/user");
+    status: {
+      handler: async function(val) {
+        if (
+          Object.keys(val).length !== 0 &&
+          Object.keys(this.group).length !== 0
+        ) {
+          try {
+            this.listLoading = true;
+            let result;
+            if (
+              val.label === statusAll.label &&
+              this.group.id === groupAll.id
+            ) {
+              result = await this.$axios.get("/v1/user");
+            }
+            if (
+              val.label === statusAll.label &&
+              this.group.id !== groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?groupId=${this.group.id}`
+              );
+            }
+            if (
+              val.label !== statusAll.label &&
+              this.group.id === groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?userStatus=${val.value}`
+              );
+            }
+            if (
+              val.label !== statusAll.label &&
+              this.group.id !== groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?groupId=${this.group.id}&&userStatus=${
+                  val.value
+                }`
+              );
+            }
+            this.data = result.data.filter(item => item.roles.length !== 3);
+            this.initData();
+            this.listLoading = false;
+          } catch (err) {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+          }
         }
-        if (val.label === statusAll.label && this.group.id !== groupAll.id) {
-          result = await this.$axios.get(
-            `/v1/user/search/?groupId=${this.group.id}`
-          );
-        }
-        if (val.label !== statusAll.label && this.group.id === groupAll.id) {
-          result = await this.$axios.get(
-            `/v1/user/search/?userStatus=${val.value}`
-          );
-        }
-        if (val.label !== statusAll.label && this.group.id !== groupAll.id) {
-          result = await this.$axios.get(
-            `/v1/user/search/?groupId=${this.group.id}&&userStatus=${val.value}`
-          );
-        }
-        this.data = result.data.filter(item => item.roles.length !== 3);
-        this.initData();
-        this.listLoading = false;
-      } catch (err) {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      }
+      },
+      deep: true
     },
-    group: async function(val) {
-      try {
-        this.listLoading = true;
-        let result;
-        if (this.status.label === statusAll.label && val.id === groupAll.id) {
-          result = await this.$axios.get("/v1/user");
+    group: {
+      handler: async function(val) {
+        if (
+          Object.keys(val).length !== 0 &&
+          Object.keys(this.status).length !== 0
+        ) {
+          try {
+            this.listLoading = true;
+            let result;
+            if (
+              this.status.label === statusAll.label &&
+              val.id === groupAll.id
+            ) {
+              result = await this.$axios.get("/v1/user");
+            }
+            if (
+              this.status.label === statusAll.label &&
+              val.id !== groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?groupId=${val.id}`
+              );
+            }
+            if (
+              this.status.label !== statusAll.label &&
+              val.id === groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?userStatus=${this.status.value}`
+              );
+            }
+            if (
+              this.status.label !== statusAll.label &&
+              val.id !== groupAll.id
+            ) {
+              result = await this.$axios.get(
+                `/v1/user/search/?groupId=${val.id}&&userStatus=${
+                  this.status.value
+                }`
+              );
+            }
+            this.data = result.data.filter(item => item.roles.length !== 3);
+            this.initData();
+            this.listLoading = false;
+          } catch (err) {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+          }
         }
-        if (this.status.label === statusAll.label && val.id !== groupAll.id) {
-          result = await this.$axios.get(`/v1/user/search/?groupId=${val.id}`);
-        }
-        if (this.status.label !== statusAll.label && val.id === groupAll.id) {
-          result = await this.$axios.get(
-            `/v1/user/search/?userStatus=${this.status.value}`
-          );
-        }
-        if (this.status.label !== statusAll.label && val.id !== groupAll.id) {
-          result = await this.$axios.get(
-            `/v1/user/search/?groupId=${val.id}&&userStatus=${
-              this.status.value
-            }`
-          );
-        }
-        this.data = result.data.filter(item => item.roles.length !== 3);
-        this.initData();
-        this.listLoading = false;
-      } catch (err) {
-        Toast({
-          message: "请求出错,请检查网络或刷新重试！",
-          duration: 0
-        });
-      }
+      },
+      deep: true
     }
   },
-  async created() {
+  created() {
     this.$store.commit("app/openLoading", true);
-    if (this.groups[0]) {
-      clearInterval(this.timer);
-      if (this.$store.state.user.info.user.userGroup) {
-        this.group = { id: this.$store.state.user.info.user.userGroup.id };
-      } else {
-        const result = await this.$axios.get("/v1/user");
-        this.data = result.data.filter(item => item.roles.length !== 3);
-      }
+    this.timer = setInterval(async () => {
       this.$store.commit("app/openLoading", true);
-    }
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        if (this.$store.state.user.info.user.userGroup) {
+          this.group = { id: this.$store.state.user.info.user.userGroup.id };
+        } else {
+          const result = await this.$axios.get("/v1/user");
+          this.data = result.data.filter(item => item.roles.length !== 3);
+        }
+        this.$store.commit("app/openLoading", false);
+      }
+    }, 10);
   },
   methods: {
     initData() {

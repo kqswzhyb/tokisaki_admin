@@ -4,7 +4,7 @@
       <div>
         <img
           v-if="info.iconUrl"
-          :src="info.iconUrl"
+          :src="info.iconUrl.replace('http', 'https')"
           width="120"
           height="120"
           style="border-radius:10px;"
@@ -21,7 +21,10 @@
         <div style="margin-bottom:5px;font-size:18px;">
           <span>{{ info.nickName }}</span>
         </div>
-        <div class="flex-start">
+        <div
+          class="flex-start"
+          @click="$router.push(`/user/scores/${$route.params.id}`)"
+        >
           <q-icon name="star" size="sm" style="color:#ff9800;" />
           <span style="color:#ff9800;" class="text-h6">{{
             info.totalScore ? info.totalScore : 0
@@ -49,7 +52,9 @@
             <p class="text-weight-medium">
               <span style="color:#999;">身份：</span
               >{{
-                roleList.find(item => item.value === info.roles.length).label
+                roleList.find(
+                  item => item.value === info.roles && info.roles.length
+                ).label
               }}
             </p>
           </q-item-label>

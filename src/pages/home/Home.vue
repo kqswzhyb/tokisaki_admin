@@ -28,11 +28,11 @@
     </q-card>
     <div class="text-center flex-between" style="margin-bottom:20px;">
       <div class="tag">
-        <div class="flex-between">
-          <q-icon name="star" size="lg" color="white" />
-          <span style="color:#fff;" class="text-h5">{{
-            $store.state.user.info.user.totalScore
-          }}</span>
+        <div class="flex-center">
+          <!-- <q-icon name="star" size="lg" color="white" /> -->
+          <div style="color:#fff;" class="text-h5 text-center">
+            {{ $store.state.user.info.user.totalScore }}
+          </div>
         </div>
         <div style="color:#fff;" class="text-h5">总积分</div>
       </div>
@@ -41,11 +41,13 @@
         style="background-color:#e66457;"
         @click="$router.push('/rank/interval?type=total')"
       >
-        <div class="flex-between">
-          <q-icon name="emoji_events" size="lg" color="white" />
-          <span style="color:#fff;" class="text-h5">{{ rank.total }}</span>
+        <div class="flex-center">
+          <!-- <q-icon name="emoji_events" size="lg" color="white" /> -->
+          <div style="color:#fff;" class="text-h5 text-center">
+            {{ rank.total }}
+          </div>
         </div>
-        <div style="color:#fff;" class="text-h5">总排名</div>
+        <div style="color:#fff;" class="text-h5 ">总排名</div>
       </div>
     </div>
     <div class="text-center flex-between" style="margin-bottom:20px;">
@@ -54,9 +56,11 @@
         style="background-color:#21BA45;"
         @click="$router.push('/rank/interval?type=week')"
       >
-        <div class="flex-between">
-          <q-icon name="event_note" size="lg" color="white" />
-          <span style="color:#fff;" class="text-h5">{{ rank.week }}</span>
+        <div class="flex-center">
+          <!-- <q-icon name="event_note" size="lg" color="white" /> -->
+          <div style="color:#fff;" class="text-h5 text-center">
+            {{ rank.week }}
+          </div>
         </div>
         <div style="color:#fff;" class="text-h5">周排名</div>
       </div>
@@ -65,9 +69,11 @@
         style="background-color:#26A69A;"
         @click="$router.push('/rank/interval?type=month')"
       >
-        <div class="flex-between">
-          <q-icon name="update" size="lg" color="white" />
-          <span style="color:#fff;" class="text-h5">{{ rank.month }}</span>
+        <div class="flex-center">
+          <!-- <q-icon name="update" size="lg" color="white" /> -->
+          <div style="color:#fff;" class="text-h5 text-center">
+            {{ rank.month }}
+          </div>
         </div>
         <div style="color:#fff;" class="text-h5">月排名</div>
       </div>

@@ -42,14 +42,16 @@ $font:#505050;
 }
 
 .tag {
-  width:150px;
+  min-width: 150px;
+  width:42vw;
   padding:20px;
   border-radius: 14px;
   background-color: #ff9800;
 }
 
 .tag2 {
-  width:150px;
+  min-width: 150px;
+  width:42vw;
   padding:20px;
   border-radius: 14px;
   background-color: #26A69A;

@@ -157,7 +157,11 @@
             </q-item-section>
           </q-item>
 
-          <!-- <q-item clickable v-ripple to="/user/scores/7">
+          <q-item
+            clickable
+            v-ripple
+            :to="`/user/scores/${this.$store.state.user.info.user.id}`"
+          >
             <q-item-section avatar class="q-ml-sm">
               <q-icon
                 name="img:statics/icons/empty-star.svg"
@@ -168,7 +172,7 @@
             <q-item-section>
               积分明细
             </q-item-section>
-          </q-item> -->
+          </q-item>
 
           <q-item
             clickable
@@ -222,7 +226,7 @@
           <q-avatar size="44px" class="q-mb-xs q-mt-xs">
             <img
               v-if="info.user.iconUrl"
-              :src="info.user.iconUrl"
+              :src="info.user.iconUrl.replace('http', 'https')"
               width="40"
               height="40"
             />
@@ -267,7 +271,11 @@ export default {
       return this.$store.state.user.info;
     },
     roles() {
-      return this.$store.state.user.info.roles.length;
+      return (
+        Object.keys(this.$store.state.user.info).length !== 0 &&
+        this.$store.state.user.info.roles &&
+        this.$store.state.user.info.roles.length
+      );
     },
     loading() {
       return this.$store.state.app.loading;
@@ -276,10 +284,10 @@ export default {
   async created() {
     this.$store.commit("app/openLoading", true);
     try {
-      await this.$store.dispatch("rank/getRank");
-      await this.$store.dispatch("task/getTask");
-      await this.$store.dispatch("group/getGroups");
-      this.$store.commit("app/openLoading", false);
+      const flag = await this.$store.dispatch("user/getCommon");
+      if (flag) {
+        this.$store.commit("app/openLoading", false);
+      }
     } catch (err) {
       this.$message.error("请求出错,请检查网络或刷新重试！");
     }

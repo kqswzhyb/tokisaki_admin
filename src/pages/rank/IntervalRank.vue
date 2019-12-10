@@ -58,142 +58,11 @@
 
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="one">
-          <q-list padding class="rounded-borders" style="width:100%;">
-            <van-list
-              v-model="oneLoading"
-              :finished="oneFinished"
-              finished-text="已经到底了..."
-              loading-text=""
-              :offset="30"
-              @load="onLoad('oneNumber', 'oneLoading', 'oneFinished', 'one')"
-            >
-              <q-item
-                clickable
-                v-ripple
-                v-for="(item, index) in one.slice(0, oneNumber)"
-                :key="index"
-                @click="goCenter(item.id)"
-                class="flex-center"
-              >
-                <div
-                  class="rank flex-center"
-                  :style="{
-                    backgroundColor:
-                      index === 0
-                        ? '#ff9800'
-                        : index === 1
-                        ? '#ccc'
-                        : index === 2
-                        ? '#b87333'
-                        : '#3c9cfe'
-                  }"
-                >
-                  <span style="color:#fff;font-size:12px">{{ index + 1 }}</span>
-                </div>
-                <q-item-section avatar top>
-                  <q-avatar>
-                    <img
-                      v-if="item.iconUrl"
-                      :src="item.iconUrl"
-                      width="40"
-                      height="40"
-                    />
-                    <img
-                      v-else
-                      src="../../assets/default_user.jpg"
-                      width="40"
-                      height="40"
-                    />
-                  </q-avatar>
-                </q-item-section>
-
-                <q-item-section>
-                  <q-item-label lines="1">{{ item.nickName }}</q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <span
-                    class="text-weight-medium main"
-                    v-if="$store.state.user.info.roles.length >= 2"
-                    >{{ item.totalScore }}</span
-                  >
-                </q-item-section>
-              </q-item>
-            </van-list>
-          </q-list>
+          <RankList ref="one" :ranks="one" />
         </q-tab-panel>
 
         <q-tab-panel name="all">
-          <q-list padding class="rounded-borders" style="width:100%;">
-            <van-list
-              v-model="allLoading"
-              :finished="allFinished"
-              finished-text="已经到底了..."
-              loading-text=""
-              :offset="30"
-              @load="onLoad('allNumber', 'allLoading', 'allFinished', 'all')"
-            >
-              <q-item
-                clickable
-                v-ripple
-                v-for="(item, index) in all.slice(0, allNumber)"
-                :key="index"
-                @click="goCenter(item.id)"
-                class="flex-center"
-              >
-                <div
-                  class="rank flex-center"
-                  :style="{
-                    backgroundColor:
-                      index === 0
-                        ? '#ff9800'
-                        : index === 1
-                        ? '#ccc'
-                        : index === 2
-                        ? '#b87333'
-                        : '#3c9cfe'
-                  }"
-                >
-                  <span style="color:#fff;font-size:12px">{{ index + 1 }}</span>
-                </div>
-                <q-item-section avatar top>
-                  <q-avatar>
-                    <img
-                      v-if="item.iconUrl"
-                      :src="item.iconUrl"
-                      width="40"
-                      height="40"
-                    />
-                    <img
-                      v-else
-                      src="../../assets/default_user.jpg"
-                      width="40"
-                      height="40"
-                    />
-                  </q-avatar>
-                </q-item-section>
-
-                <q-item-section>
-                  <q-item-label lines="1">{{ item.nickName }}</q-item-label>
-                  <q-item-label
-                    lines="1"
-                    style="padding:0;font-size:14px;color:#505050;"
-                    >{{
-                      item.userGroup ? item.userGroup.groupName : "暂无小组"
-                    }}</q-item-label
-                  >
-                </q-item-section>
-
-                <q-item-section side>
-                  <span
-                    class="text-weight-medium main"
-                    v-if="$store.state.user.info.roles.length >= 2"
-                    >{{ item.totalScore }}</span
-                  >
-                </q-item-section>
-              </q-item>
-            </van-list>
-          </q-list>
+          <RankList ref="all" :ranks="all" />
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -201,10 +70,10 @@
 </template>
 
 <script>
-import { List as VanList } from "vant";
+import RankList from "../../components/RankList";
 export default {
   components: {
-    VanList
+    RankList
   },
   name: "intervalRank",
   data() {
@@ -218,15 +87,7 @@ export default {
       all: [],
       one: [],
 
-      allNumber: 10,
-      allLoading: false,
-      allFinished: false,
-
       group: {},
-
-      oneNumber: 10,
-      oneLoading: false,
-      oneFinished: false,
 
       oneWeek: [],
       oneTotal: [],
@@ -257,7 +118,12 @@ export default {
   watch: {
     time: {
       handler: function(val) {
-        this.initData();
+        if (this.$refs.one) {
+          this.$refs.one.initData();
+        }
+        if (this.$refs.all) {
+          this.$refs.all.initData();
+        }
         switch (val) {
           case "week":
             this.showTime = Object.assign({}, this.weekTime);
@@ -279,7 +145,9 @@ export default {
     group: {
       handler: function(val) {
         this.$store.commit("app/openLoading", true);
-        this.initData();
+        if (this.$refs.one) {
+          this.$refs.one.initData();
+        }
         this.$axios
           .get(`/v1/rank/groupRank/${val.id}`)
           .then(res => {
@@ -348,32 +216,6 @@ export default {
         this.$store.commit("app/openLoading", false);
       }
     }, 10);
-  },
-  methods: {
-    onLoad(number, loading, finished, data) {
-      setTimeout(() => {
-        if (this[number] < this[data].length) {
-          this[number] += 10;
-        }
-        this[loading] = false;
-        if (this[number] >= this[data].length) {
-          this[finished] = true;
-        }
-      }, 1000);
-    },
-    initData() {
-      this.allNumber = 10;
-      this.allLoading = false;
-      this.allFinished = false;
-      this.oneNumber = 10;
-      this.oneLoading = false;
-      this.oneFinished = false;
-    },
-    goCenter(id) {
-      if (this.$store.state.user.info.roles.length >= 2) {
-        this.$router.push(`/user/center/${id}`);
-      }
-    }
   }
 };
 </script>
