@@ -5,6 +5,9 @@ import { getToken } from "../utils/auth";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import utc from "dayjs/plugin/utc";
+import { PullRefresh } from "vant";
+
+Vue.use(PullRefresh);
 
 dayjs.locale("zh-cn");
 dayjs.extend(utc);

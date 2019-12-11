@@ -6,7 +6,11 @@
     </div>
     <q-card class="my-card" style="margin-bottom:30px;">
       <q-card-section
-        v-if="shorts.length !== 0"
+        v-if="
+          shorts.some(
+            item => new Date(item.endDate).getTime() > new Date().getTime()
+          )
+        "
         @click="$router.push(`/notice/${shorts[0].id}`)"
         style="position:relative;"
       >
@@ -87,7 +91,11 @@
       </div>
       <q-card class="my-card" style="margin-bottom:30px;">
         <q-card-section
-          v-if="longs.length !== 0"
+          v-if="
+            longs.some(
+              item => new Date(item.endDate).getTime() > new Date().getTime()
+            )
+          "
           @click="$router.push(`/notice/${longs[0].id}`)"
           style="position:relative;"
         >

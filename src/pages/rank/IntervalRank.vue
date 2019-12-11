@@ -159,18 +159,15 @@ export default {
               this.showTime = Object.assign({}, this.weekTime);
               this.all = JSON.parse(JSON.stringify(this.weekRankAll));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
-              console.log(this.all, this.one);
               break;
             case "month":
               this.showTime = Object.assign({}, this.monthTime);
               this.all = JSON.parse(JSON.stringify(this.monthRankAll));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
-              console.log(this.all, this.one);
               break;
             case "total":
               this.all = JSON.parse(JSON.stringify(this.totalRankAll));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
-              console.log(this.all, this.one);
               break;
           }
           this.$store.commit("app/openLoading", false);

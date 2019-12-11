@@ -245,7 +245,9 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view v-show="!loading" />
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <router-view v-show="!loading" />
+      </van-pull-refresh>
       <Loading v-show="loading" />
     </q-page-container>
   </q-layout>
@@ -263,7 +265,8 @@ export default {
     return {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      badge: 3
+      badge: 3,
+      isLoading: false
     };
   },
   computed: {
@@ -296,6 +299,16 @@ export default {
     async logout() {
       await this.$store.dispatch("user/logout");
       this.$router.push(`/login`);
+    },
+    async onRefresh() {
+      try {
+        const flag = await this.$store.dispatch("user/getCommon");
+        if (flag) {
+          this.isLoading = false;
+        }
+      } catch (err) {
+        this.$message.error("请求出错,请检查网络或刷新重试！");
+      }
     }
   }
 };
