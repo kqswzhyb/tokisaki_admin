@@ -38,7 +38,7 @@ export default {
     },
     count: {
       type: Number,
-      default: 5
+      default: 100
     },
     image: {
       type: Array,

@@ -88,10 +88,6 @@ export default {
       one: [],
 
       group: {},
-
-      oneWeek: [],
-      oneTotal: [],
-      oneMonth: [],
       timer: ""
     };
   },
@@ -118,80 +114,67 @@ export default {
   watch: {
     time: {
       handler: function(val) {
-        if (this.$refs.one) {
-          this.$refs.one.initData();
-        }
-        if (this.$refs.all) {
-          this.$refs.all.initData();
-        }
-        switch (val) {
-          case "week":
-            this.showTime = Object.assign({}, this.weekTime);
-            this.all = JSON.parse(JSON.stringify(this.weekRankAll));
-            this.one = JSON.parse(JSON.stringify(this.oneWeek));
-            break;
-          case "month":
-            this.showTime = Object.assign({}, this.monthTime);
-            this.all = JSON.parse(JSON.stringify(this.monthRankAll));
-            this.one = JSON.parse(JSON.stringify(this.oneMonth));
-            break;
-          case "total":
-            this.all = JSON.parse(JSON.stringify(this.totalRankAll));
-            this.one = JSON.parse(JSON.stringify(this.oneTotal));
-            break;
+        if (Object.keys(this.group).length !== 0) {
+          if (this.$refs.one) {
+            this.$refs.one.initData();
+          }
+          if (this.$refs.all) {
+            this.$refs.all.initData();
+          }
+          switch (val) {
+            case "week":
+              this.showTime = Object.assign({}, this.weekTime);
+              this.all = JSON.parse(JSON.stringify(this.weekRankAll));
+              this.one = this.all.filter(
+                item => item.userGroup.id === this.group.id
+              );
+              break;
+            case "month":
+              this.showTime = Object.assign({}, this.monthTime);
+              this.all = JSON.parse(JSON.stringify(this.monthRankAll));
+              this.one = this.all.filter(
+                item => item.userGroup.id === this.group.id
+              );
+              break;
+            case "total":
+              this.all = JSON.parse(JSON.stringify(this.totalRankAll));
+              this.one = this.all.filter(
+                item => item.userGroup.id === this.group.id
+              );
+              break;
+          }
+          this.$store.commit("app/openLoading", false);
         }
       }
     },
     group: {
       handler: function(val) {
-        this.$store.commit("app/openLoading", true);
-        if (this.$refs.one) {
-          this.$refs.one.initData();
+        if (Object.keys(val).length !== 0) {
+          this.$store.commit("app/openLoading", true);
+          if (this.$refs.one) {
+            this.$refs.one.initData();
+          }
+          switch (this.time) {
+            case "week":
+              this.showTime = Object.assign({}, this.weekTime);
+              this.all = JSON.parse(JSON.stringify(this.weekRankAll));
+              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              console.log(this.all, this.one);
+              break;
+            case "month":
+              this.showTime = Object.assign({}, this.monthTime);
+              this.all = JSON.parse(JSON.stringify(this.monthRankAll));
+              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              console.log(this.all, this.one);
+              break;
+            case "total":
+              this.all = JSON.parse(JSON.stringify(this.totalRankAll));
+              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              console.log(this.all, this.one);
+              break;
+          }
+          this.$store.commit("app/openLoading", false);
         }
-        this.$axios
-          .get(`/v1/rank/groupRank/${val.id}`)
-          .then(res => {
-            if (res.status === 200) {
-              if (res.data.groupList) {
-                this.oneTotal = res.data.groupList;
-              } else {
-                this.oneTotal = [];
-              }
-              if (res.data.groupWeekList) {
-                this.oneWeek = res.data.groupWeekList;
-              } else {
-                this.oneWeek = [];
-              }
-              if (res.data.groupMonthList) {
-                this.oneMonth = res.data.groupMonthList;
-              } else {
-                this.oneMonth = [];
-              }
-              switch (this.time) {
-                case "week":
-                  this.showTime = Object.assign({}, this.weekTime);
-                  this.all = JSON.parse(JSON.stringify(this.weekRankAll));
-                  this.one = JSON.parse(JSON.stringify(this.oneWeek));
-                  break;
-                case "month":
-                  this.showTime = Object.assign({}, this.monthTime);
-                  this.all = JSON.parse(JSON.stringify(this.monthRankAll));
-                  this.one = JSON.parse(JSON.stringify(this.oneMonth));
-                  break;
-                case "total":
-                  this.all = JSON.parse(JSON.stringify(this.totalRankAll));
-                  this.one = JSON.parse(JSON.stringify(this.oneTotal));
-                  break;
-              }
-              this.$store.commit("app/openLoading", false);
-            } else {
-              this.$store.commit("app/openLoading", false);
-              this.$router.push("/404");
-            }
-          })
-          .catch(() => {
-            this.$message.error("请求出错,请检查网络或刷新重试！");
-          });
       },
       deep: true
     }
@@ -199,9 +182,9 @@ export default {
   async created() {
     this.$store.commit("app/openLoading", true);
     this.timer = setInterval(() => {
+      this.$store.commit("app/openLoading", true);
       if (this.groups[0]) {
         clearInterval(this.timer);
-        this.$store.commit("app/openLoading", true);
         if (this.$store.state.user.info.user.userGroup) {
           this.group = {
             id: this.$store.state.user.info.user.userGroup.id,

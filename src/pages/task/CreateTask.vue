@@ -110,7 +110,6 @@
         <MyUploader
           style="margin:20px 0;"
           ref="child"
-          :count="6"
           @input="getImages"
           @img="getImage"
         />

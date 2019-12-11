@@ -50,6 +50,9 @@
 
         <q-item-section>
           <q-item-label lines="1">{{ item.nickName }}</q-item-label>
+          <q-item-label lines="1" style="color:#888;font-size:14px;">{{
+            item.userGroup.groupName
+          }}</q-item-label>
         </q-item-section>
 
         <q-item-section side>

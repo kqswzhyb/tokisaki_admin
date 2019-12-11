@@ -110,7 +110,6 @@
           style="margin:20px 0;"
           ref="child"
           :image="images"
-          :count="6"
           @input="getImages"
           @img="getImage"
         />

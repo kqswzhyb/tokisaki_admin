@@ -341,15 +341,19 @@ export default {
   },
   created() {
     this.$store.commit("app/openLoading", true);
+    this.listLoading = true;
     this.timer = setInterval(async () => {
+      this.listLoading = true;
       this.$store.commit("app/openLoading", true);
       if (this.groups[0]) {
         clearInterval(this.timer);
         if (this.$store.state.user.info.user.userGroup) {
           this.group = { id: this.$store.state.user.info.user.userGroup.id };
+          this.listLoading = false;
         } else {
           const result = await this.$axios.get("/v1/user");
           this.data = result.data.filter(item => item.roles.length !== 3);
+          this.listLoading = false;
         }
         this.$store.commit("app/openLoading", false);
       }

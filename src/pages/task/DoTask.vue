@@ -12,7 +12,6 @@
       style="margin:20px 0;"
       ref="child"
       type="UserTask"
-      :count="6"
       @input="getImages"
       @img="getImage"
     />
