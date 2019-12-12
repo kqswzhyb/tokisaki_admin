@@ -30,7 +30,7 @@
             {{ item.taskName }}
           </div>
           <div class="text-subtitle2" style="color:#808080;">
-            by <span class="main">{{ item.createUser.username }}</span>
+            by <span class="main">{{ item.createUser.nickName }}</span>
             {{ item.startDate | prettyDate }}
           </div>
         </q-card-section>

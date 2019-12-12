@@ -22,7 +22,7 @@
           {{ shorts[0].taskName }}
         </div>
         <div class="text-subtitle2" style="color:#808080;">
-          by <span class="main">{{ shorts[0].createUser.username }}</span>
+          by <span class="main">{{ shorts[0].createUser.nickName }}</span>
           {{ shorts[0].startDate | prettyDate }}
         </div>
       </q-card-section>
@@ -107,7 +107,7 @@
             {{ longs[0].taskName }}
           </div>
           <div class="text-subtitle2" style="color:#808080;">
-            by <span class="main">{{ longs[0].createUser.username }}</span>
+            by <span class="main">{{ longs[0].createUser.nickName }}</span>
             {{ longs[0].startDate | prettyDate }}
           </div>
         </q-card-section>

@@ -212,6 +212,7 @@ export default {
       dialogShow: false,
       dialogShow2: false,
       data: [],
+      list: [],
       selectedId: "",
       role: 0,
       auth: 0,
@@ -238,40 +239,38 @@ export default {
         ) {
           try {
             this.listLoading = true;
-            let result;
             if (
               val.label === statusAll.label &&
               this.group.id === groupAll.id
             ) {
-              result = await this.$axios.get("/v1/user");
+              this.data = Array.from(this.list);
             }
             if (
               val.label === statusAll.label &&
               this.group.id !== groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?groupId=${this.group.id}`
+              this.data = this.list.filter(
+                item => item.userGroup.id === this.group.id
               );
             }
             if (
               val.label !== statusAll.label &&
               this.group.id === groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?userStatus=${val.value}`
+              this.data = this.list.filter(
+                item => item.userStatus === val.value
               );
             }
             if (
               val.label !== statusAll.label &&
               this.group.id !== groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?groupId=${this.group.id}&&userStatus=${
-                  val.value
-                }`
+              this.data = this.list.filter(
+                item =>
+                  item.userStatus === val.value &&
+                  item.userGroup.id === this.group.id
               );
             }
-            this.data = result.data.filter(item => item.roles.length !== 3);
             this.initData();
             this.listLoading = false;
           } catch (err) {
@@ -292,40 +291,38 @@ export default {
         ) {
           try {
             this.listLoading = true;
-            let result;
             if (
               this.status.label === statusAll.label &&
               val.id === groupAll.id
             ) {
-              result = await this.$axios.get("/v1/user");
+              this.data = Array.from(this.list);
             }
             if (
               this.status.label === statusAll.label &&
               val.id !== groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?groupId=${val.id}`
+              this.data = this.list.filter(
+                item => item.userGroup.id === val.id
               );
             }
             if (
               this.status.label !== statusAll.label &&
               val.id === groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?userStatus=${this.status.value}`
+              this.data = this.list.filter(
+                item => item.userStatus === this.status.value
               );
             }
             if (
               this.status.label !== statusAll.label &&
               val.id !== groupAll.id
             ) {
-              result = await this.$axios.get(
-                `/v1/user/search/?groupId=${val.id}&&userStatus=${
-                  this.status.value
-                }`
+              this.data = this.list.filter(
+                item =>
+                  item.userStatus === this.status.value &&
+                  item.userGroup.id === val.id
               );
             }
-            this.data = result.data.filter(item => item.roles.length !== 3);
             this.initData();
             this.listLoading = false;
           } catch (err) {
@@ -348,11 +345,18 @@ export default {
       if (this.groups[0]) {
         clearInterval(this.timer);
         if (this.$store.state.user.info.user.userGroup) {
+          const result = await this.$axios.get(
+            `/v1/user/search/?groupId=${
+              this.$store.state.user.info.user.userGroup.id
+            }`
+          );
+          this.list = result.data.filter(item => item.roles.length !== 3);
           this.group = { id: this.$store.state.user.info.user.userGroup.id };
           this.listLoading = false;
         } else {
           const result = await this.$axios.get("/v1/user");
-          this.data = result.data.filter(item => item.roles.length !== 3);
+          this.list = result.data.filter(item => item.roles.length !== 3);
+          this.data = Array.from(this.list);
           this.listLoading = false;
         }
         this.$store.commit("app/openLoading", false);
