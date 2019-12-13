@@ -70,6 +70,17 @@ export default {
   watch: {
     "$route.query": function() {
       this.formatData();
+    },
+    update: function(val) {
+      if (val) {
+        this.$emit("load", false);
+      }
+    }
+  },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
     }
   },
   created() {

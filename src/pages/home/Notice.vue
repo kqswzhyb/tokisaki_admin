@@ -123,6 +123,36 @@ export default {
       timer: ""
     };
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            this.data = this.tasks;
+            if (this.tasks.taskAttachment) {
+              this.tasks.taskAttachment.forEach(item => {
+                this.images.push(
+                  `${this.$baseURL}/${item.attachment.attachType
+                    .slice(0, 1)
+                    .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                    item.attachment.attachName
+                  }.${item.attachment.attachExtName}`
+                );
+              });
+            }
+            this.$emit("load", false);
+          }
+        }, 500);
+      }
+    }
+  },
   computed: {
     groups() {
       return this.$store.state.group.groups;

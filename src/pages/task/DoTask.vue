@@ -47,6 +47,25 @@ export default {
     MyUploader,
     VanButton
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$refs.child.initData();
+        this.form = {
+          text: "",
+          images: []
+        };
+        this.loading = false;
+        this.$emit("load", false);
+      }
+    }
+  },
   methods: {
     getImage(data) {
       this.form.images = data;

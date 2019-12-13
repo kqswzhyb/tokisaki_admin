@@ -111,6 +111,12 @@ export default {
       return this.$store.state.rank.totalRankAll;
     }
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
   watch: {
     time: {
       handler: function(val) {
@@ -174,6 +180,27 @@ export default {
         }
       },
       deep: true
+    },
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            if (this.$store.state.user.info.user.userGroup) {
+              this.group = {
+                id: this.$store.state.user.info.user.userGroup.id,
+                groupName: this.$store.state.user.info.user.userGroup.groupName
+              };
+            } else {
+              this.group = {
+                id: this.groups[0].id,
+                groupName: this.groups[0].groupName
+              };
+            }
+            this.$emit("load", false);
+          }
+        }, 10);
+      }
     }
   },
   async created() {

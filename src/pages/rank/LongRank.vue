@@ -85,6 +85,12 @@ export default {
       timer: ""
     };
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
   watch: {
     detail: {
       handler: function(val) {
@@ -134,6 +140,39 @@ export default {
         }
       },
       deep: true
+    },
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            if (this.$store.state.user.info.user.userGroup) {
+              this.group = this.$store.state.user.info.user.userGroup;
+            } else {
+              this.group = this.groups[0];
+            }
+            this.options = this.longs.sort(
+              (a, b) =>
+                new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+            );
+            if (this.$route.query.id) {
+              let result = this.options.find(
+                item => item.id === this.$route.query.id
+              );
+              if (result) {
+                this.detail = result;
+              } else {
+                this.$router.push("/404");
+              }
+            } else {
+              this.$nextTick(() => {
+                this.detail = this.options[0];
+              });
+            }
+            this.$emit("load", false);
+          }
+        }, 10);
+      }
     }
   },
   computed: {

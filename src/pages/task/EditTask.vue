@@ -175,6 +175,53 @@ export default {
       );
     }
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            this.form.taskName = this.tasks.taskName;
+            this.form.taskType = this.tasks.taskType;
+            this.form.taskScore = String(this.tasks.taskScore);
+            this.form.taskDetail = this.tasks.taskDetail;
+            this.form.startDate = dayjs
+              .utc(this.tasks.startDate)
+              .local()
+              .format("YYYY-MM-DD HH:mm");
+            this.form.endDate = dayjs
+              .utc(this.tasks.endDate)
+              .local()
+              .format("YYYY-MM-DD HH:mm");
+            if (this.tasks.taskAttachment) {
+              this.tasks.taskAttachment.forEach(item => {
+                this.images.push(
+                  Object.assign(
+                    {},
+                    {
+                      url: `${this.$baseURL}/${item.attachment.attachType
+                        .slice(0, 1)
+                        .toLowerCase() + item.attachment.attachType.slice(1)}/${
+                        item.attachment.attachName
+                      }.${item.attachment.attachExtName}`,
+                      attachment: item.attachment
+                    }
+                  )
+                );
+              });
+            }
+            this.$emit("load", false);
+          }
+        }, 500);
+      }
+    }
+  },
   created() {
     this.$store.commit("app/openLoading", true);
     this.timer = setInterval(() => {

@@ -212,6 +212,38 @@ export default {
       ]
     };
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$axios
+          .get("/v1/scoreAward")
+          .then(res => {
+            if (res.status === 200) {
+              this.rewards = res.data.sort(
+                (a, c) => a.awardPoint - c.awardPoint
+              );
+              this.$emit("load", false);
+            }
+            if (res.status === 202) {
+              this.$emit("load", false);
+              this.$router.push("/404");
+            }
+          })
+          .catch(() => {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+          });
+      }
+    }
+  },
   created() {
     this.getData();
   },

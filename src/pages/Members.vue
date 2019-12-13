@@ -334,6 +334,41 @@ export default {
         }
       },
       deep: true
+    },
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(async () => {
+          this.listLoading = true;
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            if (this.$store.state.user.info.user.userGroup) {
+              const result = await this.$axios.get(
+                `/v1/user/search/?groupId=${
+                  this.$store.state.user.info.user.userGroup.id
+                }`
+              );
+              this.list = result.data.filter(item => item.roles.length !== 3);
+              this.group = {
+                id: this.$store.state.user.info.user.userGroup.id
+              };
+              this.listLoading = false;
+              this.$emit("load", false);
+            } else {
+              const result = await this.$axios.get("/v1/user");
+              this.list = result.data.filter(item => item.roles.length !== 3);
+              this.data = Array.from(this.list);
+              this.listLoading = false;
+              this.$emit("load", false);
+            }
+          }
+        }, 10);
+      }
+    }
+  },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
     }
   },
   created() {

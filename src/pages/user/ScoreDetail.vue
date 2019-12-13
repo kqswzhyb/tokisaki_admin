@@ -58,6 +58,51 @@ export default {
       finished: false
     };
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$axios
+          .get(`/v1/usertask/user/${this.$route.params.id}/`)
+          .then(res => {
+            if (res.status === 200) {
+              this.data = res.data;
+              this.this = [];
+              this.data.forEach(item => {
+                if (item.auditDate) {
+                  this.list.push({
+                    time: item.auditDate,
+                    action: 1,
+                    task: item.task,
+                    score: item.taskScore,
+                    name: item.auditUser.nickName
+                  });
+                }
+                this.list.push({
+                  time: item.finishedDate,
+                  action: 0,
+                  task: item.task,
+                  score: item.task.taskScore
+                });
+              });
+              this.list.sort(
+                (a, b) =>
+                  new Date(b.time).getTime() - new Date(a.time).getTime()
+              );
+              this.$emit("load", false);
+            }
+          })
+          .catch(() => {
+            this.$message.error("请求出错,请检查网络或刷新重试！");
+          });
+      }
+    }
+  },
   created() {
     this.$store.commit("app/openLoading", true);
     this.$axios

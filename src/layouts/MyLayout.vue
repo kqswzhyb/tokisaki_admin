@@ -244,9 +244,13 @@
       </q-img>
     </q-drawer>
 
-    <q-page-container>
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <router-view v-show="!loading" />
+    <q-page-container style="min-height:100vh;">
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="onRefresh"
+        style="min-height:100vh;"
+      >
+        <router-view v-show="!loading" :update="updating" @load="update" />
       </van-pull-refresh>
       <Loading v-show="loading" />
     </q-page-container>
@@ -266,7 +270,9 @@ export default {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
       badge: 3,
-      isLoading: false
+      isLoading: false,
+      updating: false,
+      timer: ""
     };
   },
   computed: {
@@ -300,12 +306,20 @@ export default {
       await this.$store.dispatch("user/logout");
       this.$router.push(`/login`);
     },
+    update(data) {
+      this.updating = data;
+    },
     async onRefresh() {
       try {
+        this.$store.commit("app/openLoading", false);
         const flag = await this.$store.dispatch("user/getCommon");
-        if (flag) {
-          this.isLoading = false;
-        }
+        this.updating = true;
+        this.timer = setInterval(() => {
+          if (flag && !this.updating) {
+            clearInterval(this.timer);
+            this.isLoading = false;
+          }
+        }, 100);
       } catch (err) {
         this.$message.error("请求出错,请检查网络或刷新重试！");
       }

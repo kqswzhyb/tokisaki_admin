@@ -164,6 +164,30 @@ export default {
     MyUploader,
     VanButton
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$refs.child.initData();
+        this.form = {
+          taskName: "",
+          taskType: "ShortTerm",
+          taskScore: "",
+          startDate: "",
+          endDate: "",
+          taskDetail: "",
+          images: []
+        };
+        this.loading = false;
+        this.$emit("load", false);
+      }
+    }
+  },
   methods: {
     options(date) {
       return (

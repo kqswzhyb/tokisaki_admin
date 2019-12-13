@@ -221,6 +221,12 @@ export default {
     VanList,
     VanButton
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       submitLoading: false,
@@ -266,6 +272,46 @@ export default {
   watch: {
     "$route.params.id": function() {
       this.getData();
+    },
+    update: function(val) {
+      if (val) {
+        this.$axios
+          .all([
+            this.$axios.get(`/v1/user/${this.$route.params.id}`),
+            this.$axios.get(`/v1/usertask/user/${this.$route.params.id}/`)
+          ])
+          .then(
+            this.$axios.spread((res, res2) => {
+              if (res.status === 200 && res2.status === 200) {
+                const taskIdList = Array.from(
+                  new Set(res2.data.map(item => item.task.id))
+                );
+                this.info = res.data;
+                this.timer = setInterval(async () => {
+                  if (this.groups[0]) {
+                    clearInterval(this.timer);
+                    this.tasks = taskIdList
+                      .map(item => this.task.find(item2 => item2.id === item))
+                      .sort(
+                        (a, b) =>
+                          new Date(b.startDate).getTime() -
+                          new Date(a.startDate).getTime()
+                      );
+                    this.$emit("load", false);
+                  }
+                }, 500);
+              } else {
+                this.$router.push("/404");
+              }
+            })
+          )
+          .catch(() => {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+          });
+      }
     }
   },
   created() {
@@ -309,9 +355,13 @@ export default {
                 this.$store.commit("app/openLoading", true);
                 if (this.groups[0]) {
                   clearInterval(this.timer);
-                  this.tasks = taskIdList.map(item =>
-                    this.task.find(item2 => item2.id === item)
-                  );
+                  this.tasks = taskIdList
+                    .map(item => this.task.find(item2 => item2.id === item))
+                    .sort(
+                      (a, b) =>
+                        new Date(b.startDate).getTime() -
+                        new Date(a.startDate).getTime()
+                    );
                   this.$store.commit("app/openLoading", false);
                 }
               }, 500);

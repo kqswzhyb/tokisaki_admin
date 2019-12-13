@@ -153,6 +153,19 @@ export default {
       currentDate: new Date()
     };
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$emit("load", false);
+      }
+    }
+  },
   computed: {
     rank() {
       return this.$store.state.rank.rank;

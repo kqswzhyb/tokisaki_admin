@@ -130,6 +130,12 @@ export default {
       return this.$store.state.task.shorts;
     }
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
   watch: {
     date: {
       handler: function(val) {
@@ -181,6 +187,86 @@ export default {
         }
         this.one = this.all.filter(item => item.userGroup.id === val.id);
         this.$store.commit("app/openLoading", false);
+      }
+    },
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            if (this.$store.state.user.info.user.userGroup) {
+              this.group = this.$store.state.user.info.user.userGroup;
+            } else {
+              this.group = this.groups[0];
+            }
+            this.data = this.shorts;
+            this.dates = this.shorts.map(item =>
+              dayjs
+                .utc(item.startDate)
+                .local()
+                .format("YYYY/MM/DD")
+            );
+            this.shorts.forEach(item => {
+              if (
+                !this.tasks[
+                  dayjs
+                    .utc(item.startDate)
+                    .local()
+                    .format("YYYY/MM/DD")
+                ]
+              ) {
+                this.tasks[
+                  dayjs
+                    .utc(item.startDate)
+                    .local()
+                    .format("YYYY/MM/DD")
+                ] = [];
+              }
+              this.tasks[
+                dayjs
+                  .utc(item.startDate)
+                  .local()
+                  .format("YYYY/MM/DD")
+              ].push(item);
+            });
+
+            if (this.$route.query.id) {
+              let result = this.data.find(
+                item => item.id === this.$route.query.id
+              );
+              if (result) {
+                let select = dayjs
+                  .utc(result.startDate)
+                  .local()
+                  .format("YYYY/MM/DD");
+                this.date = select;
+                this.options = this.tasks[select];
+                this.$nextTick(() => {
+                  this.value = result;
+                });
+              } else {
+                this.$router.push("/404");
+              }
+            } else {
+              let keys = Object.keys(this.tasks);
+              keys.sort(
+                (a, b) =>
+                  new Date(b.startDate).getTime() -
+                  new Date(a.startDate).getTime()
+              );
+              let formatDate = keys.map(item =>
+                new Date(item.replace(/\//g, "-")).getTime()
+              );
+              let max = Math.max(...formatDate);
+              this.date = keys[formatDate.findIndex(item => item === max)];
+              this.options = this.tasks[this.date];
+              this.$nextTick(() => {
+                this.value = this.tasks[this.date][0];
+              });
+            }
+            this.$emit("load", false);
+          }
+        }, 10);
       }
     }
   },

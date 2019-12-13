@@ -149,6 +149,71 @@ export default {
       );
     }
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.$axios
+          .all([
+            this.$axios.get(
+              `/v1/usertask/user/${this.$route.query.uid}/task/${
+                this.$route.params.id
+              }/`
+            ),
+            this.$axios.get(`/v1/user/${this.$route.query.uid}`)
+          ])
+          .then(
+            this.$axios.spread((res, res3) => {
+              if (res.status === 200 && res3.status == 200) {
+                this.data = res.data;
+                this.nickName = res3.data.nickName;
+                this.timer = setInterval(async () => {
+                  if (this.groups[0]) {
+                    clearInterval(this.timer);
+                    this.taskName = this.tasks.taskName;
+                    this.$emit("load", false);
+                  }
+                }, 500);
+                this.id = res3.data.id;
+                this.role = res3.data.roles.length;
+                this.data = this.data.map(item => {
+                  return Object.assign({}, item, {
+                    images:
+                      (item.utAttachment &&
+                        item.utAttachment.map(
+                          item2 =>
+                            `${
+                              this.$baseURL
+                            }/${item2.attachment.attachType
+                              .slice(0, 1)
+                              .toLowerCase() +
+                              item2.attachment.attachType.slice(1)}/${
+                              item2.attachment.attachName
+                            }.${item2.attachment.attachExtName}`
+                        )) ||
+                      []
+                  });
+                });
+              } else {
+                this.$emit("load", false);
+                this.$router.push("/404");
+              }
+            })
+          )
+          .catch(() => {
+            Toast({
+              message: "请求出错,请检查网络或刷新重试！",
+              duration: 0
+            });
+          });
+      }
+    }
+  },
   created() {
     this.$store.commit("app/openLoading", true);
     this.$axios

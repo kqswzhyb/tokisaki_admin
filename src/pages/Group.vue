@@ -113,12 +113,32 @@ export default {
       return this.$store.state.group.groups;
     }
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    update: function(val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          if (this.groups[0]) {
+            clearInterval(this.timer);
+            this.$emit("load", false);
+          }
+        }, 100);
+      }
+    }
+  },
   created() {
     this.$store.commit("app/openLoading", true);
-    if (this.groups[0]) {
-      clearInterval(this.timer);
-      this.$store.commit("app/openLoading", false);
-    }
+    this.timer = setInterval(() => {
+      if (this.groups[0]) {
+        clearInterval(this.timer);
+        this.$store.commit("app/openLoading", false);
+      }
+    }, 100);
   },
   methods: {
     openDialog(id, type) {
