@@ -69,6 +69,11 @@
       >
         <q-tab name="one" label="组内排行" />
         <q-tab name="all" label="群内排行" />
+        <q-tab
+          name="group"
+          label="小组排行"
+          v-if="$store.state.user.info.roles.length >= 3"
+        />
       </q-tabs>
 
       <q-separator />
@@ -81,6 +86,13 @@
         <q-tab-panel name="all">
           <RankList ref="all" :ranks="all" />
         </q-tab-panel>
+
+        <q-tab-panel
+          name="group"
+          v-if="$store.state.user.info.roles.length >= 3"
+        >
+          <RankGroup ref="group" :ranks="groupRank" />
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
   </div>
@@ -88,12 +100,14 @@
 
 <script>
 import RankList from "../../components/RankList";
+import RankGroup from "../../components/RankGroup";
 import { Toast } from "vant";
 import dayjs from "dayjs";
 export default {
   name: "shortRank",
   components: {
-    RankList
+    RankList,
+    RankGroup
   },
   data() {
     return {
@@ -117,6 +131,7 @@ export default {
       tab: "all",
       all: [],
       one: [],
+      groupRank: [],
 
       group: {},
       timer: ""
@@ -166,6 +181,9 @@ export default {
           );
           if (res.data.allList) {
             this.all = res.data.allList;
+          }
+          if (res.data.userGroupList) {
+            this.groupRank = res.data.userGroupList;
           }
           this.one = this.all.filter(
             item => item.userGroup.id === this.group.id

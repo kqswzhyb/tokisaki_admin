@@ -246,11 +246,12 @@
 
     <q-page-container style="min-height:100vh;">
       <van-pull-refresh
+        v-show="!loading"
         v-model="isLoading"
         @refresh="onRefresh"
         style="min-height:100vh;"
       >
-        <router-view v-show="!loading" :update="updating" @load="update" />
+        <router-view :update="updating" @load="update" />
       </van-pull-refresh>
       <Loading v-show="loading" />
     </q-page-container>

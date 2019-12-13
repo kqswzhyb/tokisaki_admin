@@ -52,6 +52,11 @@
       >
         <q-tab name="one" label="组内排行" />
         <q-tab name="all" label="群内排行" />
+        <q-tab
+          name="group"
+          label="小组排行"
+          v-if="$store.state.user.info.roles.length >= 3"
+        />
       </q-tabs>
 
       <q-separator />
@@ -64,6 +69,12 @@
         <q-tab-panel name="all">
           <RankList ref="all" :ranks="all" />
         </q-tab-panel>
+        <q-tab-panel
+          name="group"
+          v-if="$store.state.user.info.roles.length >= 3"
+        >
+          <RankGroup ref="group" :ranks="groupRank" />
+        </q-tab-panel>
       </q-tab-panels>
     </q-card>
   </div>
@@ -71,9 +82,11 @@
 
 <script>
 import RankList from "../../components/RankList";
+import RankGroup from "../../components/RankGroup";
 export default {
   components: {
-    RankList
+    RankList,
+    RankGroup
   },
   name: "intervalRank",
   data() {
@@ -86,6 +99,7 @@ export default {
       showTime: {},
       all: [],
       one: [],
+      groupRank: [],
 
       group: {},
       timer: ""
@@ -100,6 +114,15 @@ export default {
     },
     monthTime() {
       return this.$store.state.rank.monthTime;
+    },
+    weekRankGroup() {
+      return this.$store.state.rank.weekRankGroup;
+    },
+    monthRankGroup() {
+      return this.$store.state.rank.monthRankGroup;
+    },
+    totalRankGroup() {
+      return this.$store.state.rank.totalRankGroup;
     },
     weekRankAll() {
       return this.$store.state.rank.weekRankAll;
@@ -131,6 +154,7 @@ export default {
             case "week":
               this.showTime = Object.assign({}, this.weekTime);
               this.all = JSON.parse(JSON.stringify(this.weekRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.weekRankGroup));
               this.one = this.all.filter(
                 item => item.userGroup.id === this.group.id
               );
@@ -138,12 +162,14 @@ export default {
             case "month":
               this.showTime = Object.assign({}, this.monthTime);
               this.all = JSON.parse(JSON.stringify(this.monthRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.monthRankGroup));
               this.one = this.all.filter(
                 item => item.userGroup.id === this.group.id
               );
               break;
             case "total":
               this.all = JSON.parse(JSON.stringify(this.totalRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.totalRankGroup));
               this.one = this.all.filter(
                 item => item.userGroup.id === this.group.id
               );
@@ -164,15 +190,18 @@ export default {
             case "week":
               this.showTime = Object.assign({}, this.weekTime);
               this.all = JSON.parse(JSON.stringify(this.weekRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.weekRankGroup));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
               break;
             case "month":
               this.showTime = Object.assign({}, this.monthTime);
               this.all = JSON.parse(JSON.stringify(this.monthRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.monthRankGroup));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
               break;
             case "total":
               this.all = JSON.parse(JSON.stringify(this.totalRankAll));
+              this.groupRank = JSON.parse(JSON.stringify(this.totalRankGroup));
               this.one = this.all.filter(item => item.userGroup.id === val.id);
               break;
           }
