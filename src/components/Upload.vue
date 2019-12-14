@@ -113,7 +113,7 @@ export default {
         } catch (err) {
           Toast({
             message: "上传失败,请检查网络或刷新重试！",
-            duration: 0
+            duration: 5000
           });
         }
       });

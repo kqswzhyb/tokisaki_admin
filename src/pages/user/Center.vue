@@ -308,7 +308,7 @@ export default {
           .catch(() => {
             Toast({
               message: "请求出错,请检查网络或刷新重试！",
-              duration: 0
+              duration: 5000
             });
           });
       }
@@ -374,7 +374,7 @@ export default {
         .catch(() => {
           Toast({
             message: "请求出错,请检查网络或刷新重试！",
-            duration: 0
+            duration: 5000
           });
         });
     },
@@ -416,7 +416,7 @@ export default {
             .catch(() => {
               Toast({
                 message: "请求出错,请检查网络或刷新重试！",
-                duration: 0
+                duration: 5000
               });
             });
         }

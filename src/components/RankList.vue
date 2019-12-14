@@ -13,7 +13,7 @@
         v-ripple
         v-for="(item, index) in ranks.slice(0, number)"
         :key="index"
-        @click="goCenter(item.id)"
+        @click="goCenter(item.userId)"
         class="flex-center"
       >
         <div
@@ -51,7 +51,7 @@
         <q-item-section>
           <q-item-label lines="1">{{ item.nickName }}</q-item-label>
           <q-item-label lines="1" style="color:#888;font-size:14px;">{{
-            item.userGroup.groupName
+            groups.find(item2 => item2.id === item.groupId).groupName
           }}</q-item-label>
         </q-item-section>
 
@@ -85,6 +85,11 @@ export default {
       loading: false,
       finished: false
     };
+  },
+  computed: {
+    groups() {
+      return this.$store.state.group.groups;
+    }
   },
   methods: {
     onLoad() {

@@ -156,7 +156,7 @@ export default {
               this.all = JSON.parse(JSON.stringify(this.weekRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.weekRankGroup));
               this.one = this.all.filter(
-                item => item.userGroup.id === this.group.id
+                item => item.groupId === this.group.id
               );
               break;
             case "month":
@@ -164,14 +164,14 @@ export default {
               this.all = JSON.parse(JSON.stringify(this.monthRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.monthRankGroup));
               this.one = this.all.filter(
-                item => item.userGroup.id === this.group.id
+                item => item.groupId === this.group.id
               );
               break;
             case "total":
               this.all = JSON.parse(JSON.stringify(this.totalRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.totalRankGroup));
               this.one = this.all.filter(
-                item => item.userGroup.id === this.group.id
+                item => item.groupId === this.group.id
               );
               break;
           }
@@ -191,18 +191,18 @@ export default {
               this.showTime = Object.assign({}, this.weekTime);
               this.all = JSON.parse(JSON.stringify(this.weekRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.weekRankGroup));
-              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              this.one = this.all.filter(item => item.groupId === val.id);
               break;
             case "month":
               this.showTime = Object.assign({}, this.monthTime);
               this.all = JSON.parse(JSON.stringify(this.monthRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.monthRankGroup));
-              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              this.one = this.all.filter(item => item.groupId === val.id);
               break;
             case "total":
               this.all = JSON.parse(JSON.stringify(this.totalRankAll));
               this.groupRank = JSON.parse(JSON.stringify(this.totalRankGroup));
-              this.one = this.all.filter(item => item.userGroup.id === val.id);
+              this.one = this.all.filter(item => item.groupId === val.id);
               break;
           }
           this.$store.commit("app/openLoading", false);
